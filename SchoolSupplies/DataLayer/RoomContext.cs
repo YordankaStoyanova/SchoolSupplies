@@ -1,4 +1,6 @@
-﻿using System;
+﻿using BusinessLayer;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,7 +8,77 @@ using System.Threading.Tasks;
 
 namespace DataLayer
 {
-    internal class RoomContext
+    public class RoomContext : IDb<Room,int>
     {
+        private readonly SchoolSuppliesDbContext dbContext;
+
+        public RoomContext(SchoolSuppliesDbContext dbContext)
+        {
+            this.dbContext = dbContext;
+        }
+
+        public async Task Create(Room item)
+        {
+            dbContext.Rooms.Add(item);
+            await dbContext.SaveChangesAsync();
+        }
+
+        
+        public async Task<Room> Read(int key, bool useNavigationalProperties = false, bool isReadOnly = false)
+        {
+            IQueryable<Room> query = dbContext.Rooms;
+
+            if (useNavigationalProperties)
+            {
+                query = query.Include(r => r.Items);
+            }
+
+            if (isReadOnly)
+            {
+                query = query.AsNoTracking();
+            }
+                
+
+            return await query.FirstOrDefaultAsync(r => r.Id == key);
+        }
+
+        public async Task<List<Room>> ReadAll(bool useNavigationalProperties = false, bool isReadOnly = false)
+        {
+            IQueryable<Room> query = dbContext.Rooms;
+
+            if (useNavigationalProperties)
+            {
+                query = query.Include(r => r.Items);
+            }
+            if (isReadOnly)
+            {
+                query = query.AsNoTracking();
+            }
+            return await query.ToListAsync();
+        }
+
+        public async Task Update(Room item, bool useNavigationalProperties = false)
+        {
+            dbContext.Rooms.Update(item);
+            await dbContext.SaveChangesAsync();
+        }
+        public async Task Delete(int key)
+        {
+            var room = await dbContext.Rooms.FindAsync(key);
+            if (room != null)
+            {
+                dbContext.Rooms.Remove(room);
+                await dbContext.SaveChangesAsync();
+            }
+        }
+        public async Task<List<Item>> GetItemsInRoom(int roomId)
+        {
+            return await dbContext.Items
+                .Include(i => i.Category)
+                .Include(i => i.User)
+                .Where(i => i.RoomId == roomId)
+                .ToListAsync();
+        }
+
     }
 }
