@@ -29,3 +29,38 @@ body {
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
   text-align: start;
 }
+
+/* ===== App Theme ===== */
+
+body {
+    background-color: #f6e9d7;
+}
+
+.app-header {
+    background-color: #f0d9b5;
+}
+
+.app-card {
+    background-color: #fff6e8;
+    border-radius: 10px;
+}
+
+.app-table thead {
+    background-color: #f0d9b5;
+}
+
+/* ===== Status colors ===== */
+.status-working {
+    background-color: #4caf50;
+    color: white;
+}
+
+.status-repair {
+    background-color: #f4a261;
+    color: white;
+}
+
+.status-disposed {
+    background-color: #e63946;
+    color: white;
+}

@@ -1,0 +1,77 @@
+﻿@using BusinessLayer
+@using BusinessLayer.Enum
+@model Item
+
+@{
+    ViewData["Title"] = "Create Item";
+}
+
+<div class="container mt-4">
+    <h2 class="text-primary mb-3">Create Item</h2>
+
+    <form asp-action="Create" method="post" class="card p-4 shadow-sm">
+
+        <!-- Name -->
+        <div class="mb-3">
+            <label asp-for="Name" class="form-label">Name</label>
+            <input asp-for="Name" class="form-control" />
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+
+        <!-- Inventory Number -->
+        <div class="mb-3">
+            <label asp-for="InventoryNumber" class="form-label">Inventory Number</label>
+            <input asp-for="InventoryNumber" class="form-control" />
+            <span asp-validation-for="InventoryNumber" class="text-danger"></span>
+        </div>
+
+        <!-- Serial Number -->
+        <div class="mb-3">
+            <label asp-for="SerialNumber" class="form-label">Serial Number</label>
+            <input asp-for="SerialNumber" class="form-control" />
+            <span asp-validation-for="SerialNumber" class="text-danger"></span>
+        </div>
+
+        <!-- Status -->
+        <div class="mb-3">
+            <label asp-for="Status" class="form-label">Status</label>
+            <select asp-for="Status" class="form-select" asp-items="Html.GetEnumSelectList<ItemStatus>()">
+            </select>
+            <span asp-validation-for="Status" class="text-danger"></span>
+        </div>
+
+        <!-- Category -->
+        <div class="mb-3">
+            <label asp-for="CategoryId" class="form-label">Category</label>
+            <select asp-for="CategoryId" asp-items="ViewBag.Categories" class="form-select">
+                <option value="">-- Select Category --</option>
+            </select>
+            <span asp-validation-for="CategoryId" class="text-danger"></span>
+        </div>
+
+        <!-- Room -->
+        <div class="mb-3">
+            <label asp-for="RoomId" class="form-label">Room</label>
+            <select asp-for="RoomId" asp-items="ViewBag.Rooms" class="form-select">
+                <option value="">-- Select Room --</option>
+            </select>
+            <span asp-validation-for="RoomId" class="text-danger"></span>
+        </div>
+
+        <!-- User -->
+        <div class="mb-3">
+            <label asp-for="UserId" class="form-label">User</label>
+            <select asp-for="UserId" asp-items="ViewBag.Users" class="form-select">
+                <option value="">-- Select User --</option>
+            </select>
+            <span asp-validation-for="UserId" class="text-danger"></span>
+        </div>
+
+        <!-- Buttons -->
+        <div class="d-flex justify-content-between">
+            <a asp-action="Index" class="btn btn-secondary">Back</a>
+            <button type="submit" class="btn btn-success">Save</button>
+        </div>
+
+    </form>
+</div>

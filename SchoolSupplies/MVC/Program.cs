@@ -1,4 +1,4 @@
-﻿using BusinessLayer;
+using BusinessLayer;
 using DataLayer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -17,12 +17,15 @@ namespace MVC
             builder.Services.AddDbContext<SchoolSuppliesDbContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+            
+
             builder.Services.AddIdentity<User, IdentityRole>()
                .AddEntityFrameworkStores<SchoolSuppliesDbContext>()
                .AddDefaultTokenProviders();
             // Добавяне на твоя Data Layer (CRUD контексти)
-            builder.Services.AddScoped<ItemContext>();
-            builder.Services.AddScoped<CategoryContext>();
+            builder.Services.AddScoped<SoftwareContext>();
+           builder.Services.AddScoped<HardwareContext>();
+            builder.Services.AddScoped<TypeContext>();
             builder.Services.AddScoped<LicenseContext>();
             builder.Services.AddScoped<RoomContext>();
             builder.Services.AddScoped<MaintenanceLogContext>();

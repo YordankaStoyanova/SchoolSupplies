@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using BusinessLayer.Enum;
+using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -14,18 +15,26 @@ namespace BusinessLayer
         [Required]
         [MaxLength(30)]
         public string Name { get; set; } 
-        public ICollection<Item> Items { get; set; } = new List<Item>();
+        public List<Software> Softwares { get; set; } = new List<Software>();
+        public List<Hardware> Hardwares { get; set; } = new List<Hardware>();
+        public UserRole Role { get; set; }
         public User()
         {
         }
 
-        public User(string email, string name)
+        public User(string email, string name, string password,UserRole role=UserRole.User)
         {
             Email = email;
-            NormalizedEmail = email.ToUpper();
-            UserName = email;
-            NormalizedUserName = email.ToUpper();
+            Role = role;
             Name = name;
+            var passwordHasher = new PasswordHasher<User>();
+            PasswordHash = passwordHasher.HashPassword(this, password);
         }
+        public User(string email,string name,string password,List<Hardware> hardwares, List<Software> softwares ,UserRole role = UserRole.User) : this(email, name, password, role)
+        {
+            Hardwares = hardwares;
+            Softwares = softwares;
+        }
+
     }
 }

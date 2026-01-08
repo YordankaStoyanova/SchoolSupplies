@@ -3,17 +3,18 @@ using BusinessLayer;
 using MVC.Models;
 using DataLayer;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using BusinessLayer.Enum;
 
 namespace MVC.Controllers
 {
     public class ItemController : Controller
     {
-        private readonly ItemContext _itemContext;
+        private readonly SoftwareContext _itemContext;
         private readonly CategoryContext _categoryContext;
         private readonly RoomContext _roomContext;
         private readonly IdentityContext _identityContext;
 
-        public ItemController(ItemContext itemContext, CategoryContext categoryContext, RoomContext roomContext, IdentityContext identityContext)
+        public ItemController(SoftwareContext itemContext, CategoryContext categoryContext, RoomContext roomContext, IdentityContext identityContext)
         {
             _itemContext = itemContext;
             _categoryContext = categoryContext;

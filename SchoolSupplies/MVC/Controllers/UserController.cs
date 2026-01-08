@@ -1,4 +1,4 @@
-﻿using BusinessLayer;
+﻿using BusinessLayer.Enum;
 using DataLayer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

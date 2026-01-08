@@ -7,9 +7,9 @@ namespace MVC.Controllers
     public class MaintenanceLogController : Controller
     {
         private readonly MaintenanceLogContext _logContext;
-        private readonly ItemContext _itemContext;
+        private readonly SoftwareContext _itemContext;
 
-        public MaintenanceLogController(MaintenanceLogContext logContext, ItemContext itemContext)
+        public MaintenanceLogController(MaintenanceLogContext logContext, SoftwareContext itemContext)
         {
             _logContext = logContext;
             _itemContext = itemContext;

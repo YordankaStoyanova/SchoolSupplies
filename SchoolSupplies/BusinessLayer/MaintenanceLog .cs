@@ -12,20 +12,22 @@ namespace BusinessLayer
     {
         [Key]
         public int Id { get; set; }
-        [ForeignKey("Item")]
-        public int ItemId { get; set; }
-        public Item Item { get; set; }
+        public Software Software{ get; set; }
+        public Hardware Hardware{ get; set; }
         [Required(ErrorMessage = "Description is required")]
         [MaxLength(500, ErrorMessage = "Description cannot more than 500 symbols")]
         public string Description { get; set; }
-        public DateTime Date { get; set; } = DateTime.Now;
+        public DateTime Date { get; set; } 
+        public User User { get; set; }
+
 
         public MaintenanceLog() { }
-        public MaintenanceLog(int itemId, string description)
+        public MaintenanceLog(string description,DateTime date,User user)
         {
-            ItemId = itemId;
             Description = description;
-            Date = DateTime.Now;
+            Date = DateTime.UtcNow;
+            User = user;
         }
+
     }
 }

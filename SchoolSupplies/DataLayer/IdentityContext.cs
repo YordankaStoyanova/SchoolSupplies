@@ -1,4 +1,5 @@
 ﻿using BusinessLayer;
+using BusinessLayer.Enum;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -11,112 +12,44 @@ namespace DataLayer
 {
     public class IdentityContext
     {
-        private readonly SchoolSuppliesDbContext _dbContext;
-        private readonly UserManager<User> _userManager;
-        private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly UserManager<User> userManager;
 
-        public IdentityContext(SchoolSuppliesDbContext context, UserManager<User> userManager,RoleManager<IdentityRole> roleManager)
+        public IdentityContext(UserManager<User> userManager)
         {
-            _dbContext = context;
-            _userManager = userManager;
-            _roleManager = roleManager;
+            this.userManager = userManager;
         }
-        public async Task<User> RegisterAsync(
-       string email,
-       string name,
-       string password,
-       UserRole role)
-        {
-            var user = new User(email, name);
 
-            var result = await _userManager.CreateAsync(user, password);
-            if (!result.Succeeded)
-            {
-                throw new Exception(string.Join("; ",
-                    result.Errors.Select(e => e.Description)));
-            }
-
+       
+        public async Task<IdentityResult> CreateAsync(User user, string password)
+  
+           => await userManager.CreateAsync(user, password);
            
-            if (!await _roleManager.RoleExistsAsync(role.ToString()))
-            {
-                await _roleManager.CreateAsync(
-                    new IdentityRole(role.ToString()));
-            }
 
-            await _userManager.AddToRoleAsync(user, role.ToString());
 
-            return user;
-        }
-
-       
-        public async Task<User?> LoginAsync(string email, string password)
-        {
-            var user = await _userManager.FindByEmailAsync(email);
-            if (user == null)
-            {
-                return null;
-            }
-            var isValid = await _userManager.CheckPasswordAsync(user, password);
-            return isValid ? user : null;
-        }
-
-       
-        public async Task<List<User>> GetAllUsersAsync()
-        {
-            return await _userManager.Users.ToListAsync();
-        }
-
-       
-        public async Task<User?> GetUserByIdAsync(string id)
-        {
-            return await _userManager.FindByIdAsync(id);
-        }
-
+        // READ
+        public async Task<User> ReadAsync(string id)
+            => await userManager.FindByIdAsync(id);
         
-        public async Task UpdateUserAsync(string id, string name)
-        {
-            var user = await _userManager.FindByIdAsync(id);
-            if (user == null)
-            {
-                throw new Exception("User not found");
-            }
-                
 
-            user.Name = name;
-            await _userManager.UpdateAsync(user);
-        }
+        public IQueryable<User> ReadAll()
+            => userManager.Users;
 
-        
-        public async Task ChangeUserRoleAsync(string userId, UserRole newRole)
-        {
-            var user = await _userManager.FindByIdAsync(userId);
-            if (user == null)
-            {
-                throw new Exception("User not found");
-            }
+        // UPDATE
+        public async Task UpdateAsync(User user)
+            => await userManager.UpdateAsync(user);
 
-            var currentRoles = await _userManager.GetRolesAsync(user);
-            await _userManager.RemoveFromRolesAsync(user, currentRoles);
+        // DELETE
+        public async Task DeleteAsync(User user)
+            => await userManager.DeleteAsync(user);
 
-            if (!await _roleManager.RoleExistsAsync(newRole.ToString()))
-            {
-                await _roleManager.CreateAsync(
-                    new IdentityRole(newRole.ToString()));
-            }
+        // AUTH
+        public async Task<bool> CheckPasswordAsync(User user, string password)
+            => await userManager.CheckPasswordAsync(user, password);
 
-            await _userManager.AddToRoleAsync(user, newRole.ToString());
-        }
+        public async Task AddToRoleAsync(User user, string role)
+            => await userManager.AddToRoleAsync(user, role);
 
-       
-        public async Task DeleteUserAsync(string id)
-        {
-            var user = await _userManager.FindByIdAsync(id);
-            if (user == null)
-            {
-                throw new Exception("User not found");
-            }
-            await _userManager.DeleteAsync(user);
-        }
-
+        public async Task<IList<string>> GetRolesAsync(User user)
+            => await userManager.GetRolesAsync(user);
     }
 }

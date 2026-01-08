@@ -7,9 +7,9 @@ namespace MVC.Controllers
     public class LicenseController : Controller
     {
         private readonly LicenseContext _licenseContext;
-        private readonly ItemContext _itemContext;
+        private readonly SoftwareContext _itemContext;
 
-        public LicenseController(LicenseContext licenseContext, ItemContext itemContext)
+        public LicenseController(LicenseContext licenseContext, SoftwareContext itemContext)
         {
             _licenseContext = licenseContext;
             _itemContext = itemContext;

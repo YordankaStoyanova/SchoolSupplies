@@ -31,6 +31,7 @@ namespace DataLayer.Migrations
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
+                    Role = table.Column<int>(type: "int", nullable: false),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -52,16 +53,20 @@ namespace DataLayer.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Categories",
+                name: "Licenses",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false)
+                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Usage = table.Column<int>(type: "int", nullable: false),
+                    MaxUsage = table.Column<int>(type: "int", nullable: false),
+                    ExpirationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Status = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Categories", x => x.Id);
+                    table.PrimaryKey("PK_Licenses", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -76,6 +81,19 @@ namespace DataLayer.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Rooms", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Types",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Types", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -185,7 +203,7 @@ namespace DataLayer.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Items",
+                name: "Hardwares",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -193,52 +211,91 @@ namespace DataLayer.Migrations
                     Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     InventoryNumber = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     SerialNumber = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    CategoryId = table.Column<int>(type: "int", nullable: false),
-                    RoomId = table.Column<int>(type: "int", nullable: false),
+                    Category = table.Column<int>(type: "int", nullable: false),
+                    TypeId = table.Column<int>(type: "int", nullable: true),
+                    RoomId = table.Column<int>(type: "int", nullable: true),
                     Status = table.Column<int>(type: "int", nullable: false),
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Items", x => x.Id);
+                    table.PrimaryKey("PK_Hardwares", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Items_AspNetUsers_UserId",
+                        name: "FK_Hardwares_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.SetNull);
+                        principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_Items_Categories_CategoryId",
-                        column: x => x.CategoryId,
-                        principalTable: "Categories",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Items_Rooms_RoomId",
+                        name: "FK_Hardwares_Rooms_RoomId",
                         column: x => x.RoomId,
                         principalTable: "Rooms",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Hardwares_Types_TypeId",
+                        column: x => x.TypeId,
+                        principalTable: "Types",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
-                name: "Licenses",
+                name: "Softwares",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    LicenseKey = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
-                    ExpirationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ItemId = table.Column<int>(type: "int", nullable: false)
+                    Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    SerialNumber = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Category = table.Column<int>(type: "int", nullable: false),
+                    TypeId = table.Column<int>(type: "int", nullable: true),
+                    RoomId = table.Column<int>(type: "int", nullable: true),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    HardwareId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Licenses", x => x.Id);
+                    table.PrimaryKey("PK_Softwares", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Licenses_Items_ItemId",
-                        column: x => x.ItemId,
-                        principalTable: "Items",
+                        name: "FK_Softwares_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Softwares_Hardwares_HardwareId",
+                        column: x => x.HardwareId,
+                        principalTable: "Hardwares",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Softwares_Rooms_RoomId",
+                        column: x => x.RoomId,
+                        principalTable: "Rooms",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Softwares_Types_TypeId",
+                        column: x => x.TypeId,
+                        principalTable: "Types",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "LicenseSoftware",
+                columns: table => new
+                {
+                    LicensesId = table.Column<int>(type: "int", nullable: false),
+                    SoftwaresId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_LicenseSoftware", x => new { x.LicensesId, x.SoftwaresId });
+                    table.ForeignKey(
+                        name: "FK_LicenseSoftware_Licenses_LicensesId",
+                        column: x => x.LicensesId,
+                        principalTable: "Licenses",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_LicenseSoftware_Softwares_SoftwaresId",
+                        column: x => x.SoftwaresId,
+                        principalTable: "Softwares",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -249,19 +306,30 @@ namespace DataLayer.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    ItemId = table.Column<int>(type: "int", nullable: false),
+                    SoftwareId = table.Column<int>(type: "int", nullable: true),
+                    HardwareId = table.Column<int>(type: "int", nullable: true),
                     Description = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
-                    Date = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    Date = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_MaintenanceLogs", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_MaintenanceLogs_Items_ItemId",
-                        column: x => x.ItemId,
-                        principalTable: "Items",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        name: "FK_MaintenanceLogs_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_MaintenanceLogs_Hardwares_HardwareId",
+                        column: x => x.HardwareId,
+                        principalTable: "Hardwares",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_MaintenanceLogs_Softwares_SoftwareId",
+                        column: x => x.SoftwareId,
+                        principalTable: "Softwares",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateIndex(
@@ -304,35 +372,59 @@ namespace DataLayer.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Items_CategoryId",
-                table: "Items",
-                column: "CategoryId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Items_InventoryNumber",
-                table: "Items",
-                column: "InventoryNumber",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Items_RoomId",
-                table: "Items",
+                name: "IX_Hardwares_RoomId",
+                table: "Hardwares",
                 column: "RoomId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Items_UserId",
-                table: "Items",
+                name: "IX_Hardwares_TypeId",
+                table: "Hardwares",
+                column: "TypeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Hardwares_UserId",
+                table: "Hardwares",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Licenses_ItemId",
-                table: "Licenses",
-                column: "ItemId");
+                name: "IX_LicenseSoftware_SoftwaresId",
+                table: "LicenseSoftware",
+                column: "SoftwaresId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_MaintenanceLogs_ItemId",
+                name: "IX_MaintenanceLogs_HardwareId",
                 table: "MaintenanceLogs",
-                column: "ItemId");
+                column: "HardwareId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MaintenanceLogs_SoftwareId",
+                table: "MaintenanceLogs",
+                column: "SoftwareId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MaintenanceLogs_UserId",
+                table: "MaintenanceLogs",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Softwares_HardwareId",
+                table: "Softwares",
+                column: "HardwareId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Softwares_RoomId",
+                table: "Softwares",
+                column: "RoomId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Softwares_TypeId",
+                table: "Softwares",
+                column: "TypeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Softwares_UserId",
+                table: "Softwares",
+                column: "UserId");
         }
 
         /// <inheritdoc />
@@ -354,7 +446,7 @@ namespace DataLayer.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "Licenses");
+                name: "LicenseSoftware");
 
             migrationBuilder.DropTable(
                 name: "MaintenanceLogs");
@@ -363,16 +455,22 @@ namespace DataLayer.Migrations
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "Items");
+                name: "Licenses");
+
+            migrationBuilder.DropTable(
+                name: "Softwares");
+
+            migrationBuilder.DropTable(
+                name: "Hardwares");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
 
             migrationBuilder.DropTable(
-                name: "Categories");
+                name: "Rooms");
 
             migrationBuilder.DropTable(
-                name: "Rooms");
+                name: "Types");
         }
     }
 }

@@ -2,13 +2,15 @@
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace DataLayer
 {
-    public class MaintenanceLogContext : IDb<MaintenanceLog,int>
+    public class MaintenanceLogContext : IDb<MaintenanceLog, int>
+
     {
         private readonly SchoolSuppliesDbContext dbContext;
 
@@ -16,26 +18,26 @@ namespace DataLayer
         {
             this.dbContext = dbContext;
         }
-
         public async Task Create(MaintenanceLog item)
         {
-           dbContext.MaintenanceLogs.Add(item);
+            dbContext.MaintenanceLogs.Add(item);
             await dbContext.SaveChangesAsync();
         }
 
-       
-        public  async Task<MaintenanceLog> Read(int key, bool useNavigationalProperties = false, bool isReadOnly = false)
+        
+        public async Task<MaintenanceLog> Read(int key, bool useNavigationalProperties = false, bool isReadOnly = false)
         {
             IQueryable<MaintenanceLog> query = dbContext.MaintenanceLogs;
 
             if (useNavigationalProperties)
-            {
-                query = query.Include(m => m.Item);
-            }
+                query = query
+                    .Include(m => m.Hardware)
+                    .Include(m=> m.Software)
+                    .Include(m => m.User);
+
             if (isReadOnly)
-            {
                 query = query.AsNoTracking();
-            }
+
             return await query.FirstOrDefaultAsync(m => m.Id == key);
         }
 
@@ -44,23 +46,56 @@ namespace DataLayer
             IQueryable<MaintenanceLog> query = dbContext.MaintenanceLogs;
 
             if (useNavigationalProperties)
-            {
-                query = query.Include(m => m.Item);
-            }
+                query = query
+                   .Include(m => m.Hardware)
+                    .Include(m => m.Software)
+                    .Include(m => m.User);
+
             if (isReadOnly)
-            {
                 query = query.AsNoTracking();
-            }
+
             return await query.ToListAsync();
         }
 
         public async Task Update(MaintenanceLog item, bool useNavigationalProperties = false)
         {
-            dbContext.MaintenanceLogs.Update(item);
+            
+            MaintenanceLog logFromDb = await Read(item.Id,useNavigationalProperties=false);
+            dbContext.Entry<MaintenanceLog>(logFromDb).CurrentValues.SetValues(item);
+            if (useNavigationalProperties)
+            {
+                Software softwareFromDb = await dbContext.Softwares.FindAsync(item.Software.Id);
+                if (softwareFromDb != null)
+                {
+                    logFromDb.Software = softwareFromDb;
+                }
+                else
+                {
+                    logFromDb.Software=item.Software;
+                }
+                Hardware hardwareFromDb = await dbContext.Hardwares.FindAsync(item.Hardware.Id);
+                if (hardwareFromDb != null)
+                {
+                    logFromDb.Hardware = hardwareFromDb;
+                }
+                else
+                {
+                    logFromDb.Hardware = item.Hardware;
+                }
+                User userFromDb = await dbContext.Users.FindAsync(item.User.Id);
+                if (userFromDb != null)
+                { 
+                    logFromDb.User = userFromDb;
+                }
+                else
+                {
+                    logFromDb.User = item.User;
+                }
+            }
             await dbContext.SaveChangesAsync();
         }
-
-        public  async Task Delete(int key)
+        
+        public async Task Delete(int key)
         {
             var log = await dbContext.MaintenanceLogs.FindAsync(key);
             if (log != null)
@@ -68,13 +103,6 @@ namespace DataLayer
                 dbContext.MaintenanceLogs.Remove(log);
                 await dbContext.SaveChangesAsync();
             }
-        }
-        public async Task<List<MaintenanceLog>> GetLogsForItem(int itemId)
-        {
-            return await dbContext.MaintenanceLogs
-                .Where(m => m.ItemId == itemId)
-                .OrderByDescending(m => m.Date)
-                .ToListAsync();
         }
 
     }

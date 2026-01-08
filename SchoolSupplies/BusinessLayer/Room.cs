@@ -17,7 +17,8 @@ namespace BusinessLayer
         [Required]
         [Range(1, 3, ErrorMessage = "Floor must be in [1;3]")]
         public int Floor { get; set; }
-        public ICollection<Item> Items { get; set; } = new List<Item>();
+        public List<Software> Softwares { get; set; } = new List<Software>();
+        public List<Hardware> Hardwares { get; set; } = new List<Hardware>();
         public Room()
         {
 
@@ -26,6 +27,11 @@ namespace BusinessLayer
         {
             RoomNumber = roomNumber;
             Floor = floor;
+        }
+        public Room(int roomNumber,int floor,List<Software> softwares,List<Hardware> hardwares):this(roomNumber,floor)
+        {
+           Softwares = softwares;
+            Hardwares = hardwares;
         }
     }
 }
