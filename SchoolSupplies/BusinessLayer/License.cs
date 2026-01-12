@@ -18,16 +18,17 @@ namespace BusinessLayer
         [MaxLength(100)]
         public string Name { get; set; }
 
-        public int Usage {  get; set; }
+        public int Usage => Software.Hardwares.Count;
 
         public int MaxUsage {  get; set; }
+       
 
 
         [Required]
         public DateTime ExpirationDate { get; set; }
 
     
-        public List< Software> Softwares { get; set; } = new List< Software >();
+        public Software Software { get; set; }
 
         [Required]
         public LicenseStatus Status { get; set; }
@@ -35,12 +36,11 @@ namespace BusinessLayer
         {
 
         }
-        public License(string name, DateTime expirationDate, int maxUsage,int usage=0)
+        public License(string name, DateTime expirationDate, int maxUsage)
         {
             Name = name;
             ExpirationDate = expirationDate;
             MaxUsage = maxUsage;
-            Usage = usage;
         }
     }
 }

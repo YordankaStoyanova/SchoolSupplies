@@ -28,15 +28,15 @@ namespace BusinessLayer
         public string SerialNumber { get; set; }
 
         public Category Category { get; set; }
-
+        [Required]
         public Type Type { get; set; }
-
-        public Room Room { get; set; } = null!;
-
-
+        [Required]
         public User User { get; set; }
         public List<MaintenanceLog> MaintenanceLogs { get; set; } = new List<MaintenanceLog>();
-        public List<License> Licenses { get; set; } = new List<License> { };
+        public int LicenseId { get; set; }
+        [Required]
+        public License License { get; set; }
+        public List <Hardware> Hardwares { get; set; }
         public Software ()
         {
 

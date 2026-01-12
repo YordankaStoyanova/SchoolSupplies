@@ -36,7 +36,7 @@ namespace BusinessLayer
 
         public Type Type { get; set; }
 
-        public Room Room { get; set; } = null!;
+        public Room Room { get; set; }
 
         [Required]
         public ItemStatus Status { get; set; }

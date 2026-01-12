@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace DataLayer.Migrations
 {
     /// <inheritdoc />
-    public partial class migrations : Migration
+    public partial class initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -59,7 +59,6 @@ namespace DataLayer.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Usage = table.Column<int>(type: "int", nullable: false),
                     MaxUsage = table.Column<int>(type: "int", nullable: false),
                     ExpirationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Status = table.Column<int>(type: "int", nullable: false)
@@ -246,10 +245,10 @@ namespace DataLayer.Migrations
                     Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     SerialNumber = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Category = table.Column<int>(type: "int", nullable: false),
-                    TypeId = table.Column<int>(type: "int", nullable: true),
-                    RoomId = table.Column<int>(type: "int", nullable: true),
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    HardwareId = table.Column<int>(type: "int", nullable: true)
+                    TypeId = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    LicenseId = table.Column<int>(type: "int", nullable: false),
+                    RoomId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -258,12 +257,14 @@ namespace DataLayer.Migrations
                         name: "FK_Softwares_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Softwares_Hardwares_HardwareId",
-                        column: x => x.HardwareId,
-                        principalTable: "Hardwares",
-                        principalColumn: "Id");
+                        name: "FK_Softwares_Licenses_LicenseId",
+                        column: x => x.LicenseId,
+                        principalTable: "Licenses",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Softwares_Rooms_RoomId",
                         column: x => x.RoomId,
@@ -273,27 +274,28 @@ namespace DataLayer.Migrations
                         name: "FK_Softwares_Types_TypeId",
                         column: x => x.TypeId,
                         principalTable: "Types",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "LicenseSoftware",
+                name: "HardwareSoftware",
                 columns: table => new
                 {
-                    LicensesId = table.Column<int>(type: "int", nullable: false),
+                    HardwaresId = table.Column<int>(type: "int", nullable: false),
                     SoftwaresId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_LicenseSoftware", x => new { x.LicensesId, x.SoftwaresId });
+                    table.PrimaryKey("PK_HardwareSoftware", x => new { x.HardwaresId, x.SoftwaresId });
                     table.ForeignKey(
-                        name: "FK_LicenseSoftware_Licenses_LicensesId",
-                        column: x => x.LicensesId,
-                        principalTable: "Licenses",
+                        name: "FK_HardwareSoftware_Hardwares_HardwaresId",
+                        column: x => x.HardwaresId,
+                        principalTable: "Hardwares",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_LicenseSoftware_Softwares_SoftwaresId",
+                        name: "FK_HardwareSoftware_Softwares_SoftwaresId",
                         column: x => x.SoftwaresId,
                         principalTable: "Softwares",
                         principalColumn: "Id",
@@ -387,8 +389,8 @@ namespace DataLayer.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_LicenseSoftware_SoftwaresId",
-                table: "LicenseSoftware",
+                name: "IX_HardwareSoftware_SoftwaresId",
+                table: "HardwareSoftware",
                 column: "SoftwaresId");
 
             migrationBuilder.CreateIndex(
@@ -407,9 +409,10 @@ namespace DataLayer.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Softwares_HardwareId",
+                name: "IX_Softwares_LicenseId",
                 table: "Softwares",
-                column: "HardwareId");
+                column: "LicenseId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Softwares_RoomId",
@@ -446,7 +449,7 @@ namespace DataLayer.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "LicenseSoftware");
+                name: "HardwareSoftware");
 
             migrationBuilder.DropTable(
                 name: "MaintenanceLogs");
@@ -455,16 +458,16 @@ namespace DataLayer.Migrations
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "Licenses");
+                name: "Hardwares");
 
             migrationBuilder.DropTable(
                 name: "Softwares");
 
             migrationBuilder.DropTable(
-                name: "Hardwares");
+                name: "AspNetUsers");
 
             migrationBuilder.DropTable(
-                name: "AspNetUsers");
+                name: "Licenses");
 
             migrationBuilder.DropTable(
                 name: "Rooms");

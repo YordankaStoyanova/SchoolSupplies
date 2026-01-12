@@ -21,6 +21,12 @@ namespace DataLayer
         }
         public async Task Create(Software item)
         {
+            Type typeFromDb =await dbContext.Types.FindAsync(item.Type.Id);
+            if (typeFromDb != null) item.Type = typeFromDb;
+            User userFromDb = await dbContext.Users.FindAsync(item.User.Id);
+            if (userFromDb != null) item.User = userFromDb;
+            License licenseFromDb = await dbContext.Licenses.FindAsync(item.License.Id);
+            if (licenseFromDb != null) item.License = licenseFromDb;
             dbContext.Softwares.Add(item);
             await dbContext.SaveChangesAsync();
         }
@@ -33,10 +39,9 @@ namespace DataLayer
 
             if (useNavigationalProperties)
                 query = query
-                    .Include(s => s.Room)
                     .Include(s => s.User)
                     .Include(s => s.MaintenanceLogs)
-                    .Include(s => s.Licenses)
+                    .Include(s => s.License)
                     .Include(s => s.Type);
 
             if (isReadOnly)
@@ -51,10 +56,9 @@ namespace DataLayer
 
             if (useNavigationalProperties)
                 query = query
-                    .Include(s => s.Room)
                     .Include(s => s.User)
                     .Include(s => s.MaintenanceLogs)
-                    .Include(s => s.Licenses)
+                    .Include(s => s.License)
                     .Include(s => s.Type);
 
             if (isReadOnly)
@@ -79,15 +83,7 @@ namespace DataLayer
                 {
                     softwareFromDb.Type = item.Type;
                 }
-                Room roomFromDb = await dbContext.Rooms.FindAsync(item.Room.Id);
-                if (roomFromDb != null)
-                {
-                    softwareFromDb.Room = roomFromDb; 
-                }
-                else
-                {
-                    softwareFromDb.Room = item.Room;
-                }
+                
                 User userFromDb = await dbContext.Users.FindAsync(item.User.Id);
                 if (userFromDb != null) {
 
@@ -97,20 +93,16 @@ namespace DataLayer
                 {
                     softwareFromDb.User = item.User;
                 }
-                List<License>licenses  = new List<License>();
-                for (int i = 0; i < item.Licenses.Count; i++)
+                License licenseFromDb  = await dbContext.Licenses.FindAsync(item.License.Id);
+                if (licenseFromDb != null)
                 {
-                    License licenseFromDb = await dbContext.Licenses.FindAsync(item.Licenses[i].Id);
-                    if (licenseFromDb != null)
-                    {
-                        licenses.Add(licenseFromDb);
-                    }
-                    else
-                    {
-                        licenses.Add(item.Licenses[i]);
-                    }
+                    softwareFromDb.License = licenseFromDb;
                 }
-                softwareFromDb.Licenses = licenses;
+                else
+                {
+                    softwareFromDb.License = item.License;
+                }
+
                 List <MaintenanceLog> logs = new List <MaintenanceLog>();
                 for (int i = 0; i < item.MaintenanceLogs.Count; i++)
                 {

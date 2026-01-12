@@ -19,7 +19,7 @@ namespace DataLayer
         public DbSet<Software> Softwares { get; set; }
         public DbSet<Hardware> Hardwares { get; set; }
         public DbSet<Room> Rooms { get; set; }
-        public DbSet<User> Users {  get; set; }
+        //public DbSet<User> Users {  get; set; }
         public DbSet<Type> Types { get; set; }
         public DbSet<MaintenanceLog> MaintenanceLogs { get; set; }
         public DbSet<License> Licenses { get; set; }
@@ -33,6 +33,11 @@ namespace DataLayer
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Software>(s=>
+            {
+                s.HasOne(s => s.License).WithOne(l => l.Software).HasForeignKey<Software>(so=>so.LicenseId);
+                s.HasMany(s=>s.Hardwares).WithMany(h=>h.Softwares);
+            });
             base.OnModelCreating(modelBuilder); 
         }
     }

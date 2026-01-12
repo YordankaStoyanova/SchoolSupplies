@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataLayer.Migrations
 {
     [DbContext(typeof(SchoolSuppliesDbContext))]
-    [Migration("20260108141751_migrations")]
-    partial class migrations
+    [Migration("20260112085013_initial")]
+    partial class initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -96,9 +96,6 @@ namespace DataLayer.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
-                    b.Property<int>("Usage")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.ToTable("Licenses");
@@ -170,7 +167,7 @@ namespace DataLayer.Migrations
                     b.Property<int>("Category")
                         .HasColumnType("int");
 
-                    b.Property<int?>("HardwareId")
+                    b.Property<int>("LicenseId")
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
@@ -186,15 +183,17 @@ namespace DataLayer.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<int?>("TypeId")
+                    b.Property<int>("TypeId")
                         .HasColumnType("int");
 
                     b.Property<string>("UserId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("HardwareId");
+                    b.HasIndex("LicenseId")
+                        .IsUnique();
 
                     b.HasIndex("RoomId");
 
@@ -296,19 +295,19 @@ namespace DataLayer.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("LicenseSoftware", b =>
+            modelBuilder.Entity("HardwareSoftware", b =>
                 {
-                    b.Property<int>("LicensesId")
+                    b.Property<int>("HardwaresId")
                         .HasColumnType("int");
 
                     b.Property<int>("SoftwaresId")
                         .HasColumnType("int");
 
-                    b.HasKey("LicensesId", "SoftwaresId");
+                    b.HasKey("HardwaresId", "SoftwaresId");
 
                     b.HasIndex("SoftwaresId");
 
-                    b.ToTable("LicenseSoftware");
+                    b.ToTable("HardwareSoftware");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -488,34 +487,40 @@ namespace DataLayer.Migrations
 
             modelBuilder.Entity("BusinessLayer.Software", b =>
                 {
-                    b.HasOne("BusinessLayer.Hardware", null)
-                        .WithMany("Softwares")
-                        .HasForeignKey("HardwareId");
+                    b.HasOne("BusinessLayer.License", "License")
+                        .WithOne("Software")
+                        .HasForeignKey("BusinessLayer.Software", "LicenseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.HasOne("BusinessLayer.Room", "Room")
+                    b.HasOne("BusinessLayer.Room", null)
                         .WithMany("Softwares")
                         .HasForeignKey("RoomId");
 
                     b.HasOne("BusinessLayer.Type", "Type")
                         .WithMany()
-                        .HasForeignKey("TypeId");
+                        .HasForeignKey("TypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("BusinessLayer.User", "User")
                         .WithMany("Softwares")
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Navigation("Room");
+                    b.Navigation("License");
 
                     b.Navigation("Type");
 
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("LicenseSoftware", b =>
+            modelBuilder.Entity("HardwareSoftware", b =>
                 {
-                    b.HasOne("BusinessLayer.License", null)
+                    b.HasOne("BusinessLayer.Hardware", null)
                         .WithMany()
-                        .HasForeignKey("LicensesId")
+                        .HasForeignKey("HardwaresId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -580,8 +585,11 @@ namespace DataLayer.Migrations
             modelBuilder.Entity("BusinessLayer.Hardware", b =>
                 {
                     b.Navigation("MaintenanceLogs");
+                });
 
-                    b.Navigation("Softwares");
+            modelBuilder.Entity("BusinessLayer.License", b =>
+                {
+                    b.Navigation("Software");
                 });
 
             modelBuilder.Entity("BusinessLayer.Room", b =>

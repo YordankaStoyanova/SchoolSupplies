@@ -19,6 +19,26 @@ namespace DataLayer
         }
         public async Task Create(Hardware item)
         {
+            Type typeFromDb = await dbContext.Types.FindAsync(item.Type.Id);
+            if (typeFromDb != null) item.Type = typeFromDb;
+            Room roomFromDb = await dbContext.Rooms.FindAsync(item.Room.Id);
+            if (roomFromDb != null) item.Room = roomFromDb;
+            User userFromDb = await dbContext.Users.FindAsync(item.User.Id);
+            if (userFromDb != null) item.User = userFromDb;
+            if(item.Softwares.Count != 0)
+            {
+                List<Software> softwares = new List<Software>(item.Softwares.Count);
+                for (int i = 0; i < item.Softwares.Count; i++)
+                {
+                    Software softwareFromDb = await dbContext.Softwares.FindAsync(item.Softwares[i].Id);
+                    if (softwareFromDb != null) { softwares.Add(softwareFromDb); }
+                    else
+                    {
+                        softwares.Add(item.Softwares[i]);
+                    }
+                }
+                item.Softwares= softwares;
+            }
             dbContext.Hardwares.Add(item);
             await dbContext.SaveChangesAsync();
         }

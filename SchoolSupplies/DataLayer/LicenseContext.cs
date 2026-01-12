@@ -32,7 +32,7 @@ namespace DataLayer
             IQueryable<License> query = dbContext.Licenses;
 
             if (useNavigationalProperties)
-                query = query.Include(l => l.Softwares);
+                query = query.Include(l => l.Software);
 
             if (isReadOnly)
                 query = query.AsNoTracking();
@@ -45,7 +45,7 @@ namespace DataLayer
             IQueryable<License> query = dbContext.Licenses;
 
             if (useNavigationalProperties)
-                query = query.Include(l => l.Softwares);
+                query = query.Include(l => l.Software);
             if (isReadOnly)
             {
                 query = query.AsNoTracking();
@@ -60,14 +60,16 @@ namespace DataLayer
             dbContext.Entry<License>(licenseFromDb).CurrentValues.SetValues(item);
             if (useNavigationalProperties)
             {
-                List<Software> softwares = new List<Software>();
-                for (int i = 0; i < item.Softwares.Count; i++)
+                Software softwareFromDb = await dbContext.Softwares.FindAsync(item.Software.Id);
+                if (softwareFromDb != null) 
                 {
-                    Software softwareFromDb = dbContext.Softwares.Find(item.Softwares[i].Id);
-                    if(softwareFromDb != null) softwares.Add(softwareFromDb);
-                    else softwares.Add(item.Softwares[i]);
+                    licenseFromDb.Software = softwareFromDb;
                 }
-                licenseFromDb.Softwares = softwares;
+                else
+                {
+                    licenseFromDb.Software = item.Software;
+                }
+             
             }
            
             await dbContext.SaveChangesAsync();

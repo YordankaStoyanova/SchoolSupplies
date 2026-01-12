@@ -1,4 +1,6 @@
-﻿using System;
+﻿using BusinessLayer;
+using DataLayer;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,5 +10,14 @@ namespace ServiceLayer
 {
     public class MaintenanceLogService
     {
+          private readonly SchoolSuppliesDbContext context;
+
+            public MaintenanceLogService(SchoolSuppliesDbContext context)
+            {
+                this.context = context;
+            }
+
+          
+        }
     }
-}
+
