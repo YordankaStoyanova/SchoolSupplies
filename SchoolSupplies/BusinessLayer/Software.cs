@@ -14,24 +14,20 @@ namespace BusinessLayer
         public int Id { get; set; }
 
         [Required]
-        [MaxLength(50, ErrorMessage = "Name must not be more than 50 symbols!")]
-        [MinLength(2, ErrorMessage = "Name must be at least 2 symbols!")]
+        [MaxLength(50, ErrorMessage = "Името не може да е над 50 символа!")]
+        [MinLength(2, ErrorMessage = "Името трябва да е поне 2 символа!")]
+        [RegularExpression(@"^(\w)+$")]
         public string Name { get; set; }
 
-        
-
-        [Required(ErrorMessage = "Serial number is required")]
+        [Required(ErrorMessage = "Серийният номер е задължителен!")]
         [StringLength(100, MinimumLength = 5,
-     ErrorMessage = "Serial number must be between 5 and 100 symbols")]
+     ErrorMessage = "Серийният номер трябва да е между 5 и 100 символа!")]
         [RegularExpression(@"^[A-Za-z0-9]+$",
-     ErrorMessage = "Serial number can contain only letters and numbers")]
+     ErrorMessage = "Серийният номер може да съдържа само букви и числа!")]
         public string SerialNumber { get; set; }
 
-        public Category Category { get; set; }
         [Required]
         public Type Type { get; set; }
-        [Required]
-        public User User { get; set; }
         public List<MaintenanceLog> MaintenanceLogs { get; set; } = new List<MaintenanceLog>();
         public int LicenseId { get; set; }
         [Required]

@@ -1,0 +1,132 @@
+﻿@using BusinessLayer.Enum
+@model IEnumerable<BusinessLayer.Hardware>
+
+@{
+    ViewData["Title"] = "Hardware";
+}
+<div class="tab-content">
+    <div class="tab-pane fade show active">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="search-filter-container">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="search-box">
+                                <i class="fas fa-search"></i>
+                                <form id="search">
+                                    <input type="text" name="s" id="s" class="form-control" placeholder="Търсене по име.......">
+                                </form>
+                            </div>
+                        </div>
+
+                        <div class="col-md-3">
+                            <select class="form-select" id="t">
+                                @{
+                                    var type = ViewContext.RouteData.Values["t"]?.ToString();
+                                   
+                                    <option value="all">Всички статуси</option>
+                                <option value="@ItemStatus.Working">Работещ</option>
+                                <option value="@ItemStatus.Repair">За ремонт</option>
+                                <option value="@ItemStatus.Disposed">Бракуван</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <select class="form-select" id="r">
+
+                                @*{
+                                    var selectedRoom = ViewContext.RouteData.Values["r"]?.ToString();
+                                    if (string.IsNullOrWhiteSpace(selectedRoom))
+                                    {
+                                        <option selected value="all">Всички стаи</option>
+                                        foreach (var item in Model.Select(h => h.Room).Distinct())
+                                        {
+                                            <option value="@item.Id">@item.Name</option>
+
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <option value="all">Всички видове</option>
+                                        var room = int.Parse(selectedRoom);
+                                        foreach (var item in Model.Select(s => s.Type).Distinct())
+                                        {
+
+                                            if (room == item.Id)
+                                            {
+                                                <option selected value="@item.Id">@item.Name</option>
+                                            }
+                                            else
+                                            {
+                                                <option value="@item.Id">@item.Name</option>
+                                            }
+                                        }
+                                    }
+                                }*@
+                                @{
+                                    <option value="all">Всички стаи</option>
+                                    foreach (var item in Model.Select(h => h.Room).Distinct())
+                                    {
+                                        <option value="@item.Id">@item.Name</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-container section-fixed-height">
+                    <div class="table-responsive">
+                        <table class="table table-custom table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Име</th>
+                                    <th>Вид</th>
+                                    <th>Стая</th>
+                                    <th>Състояние</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model)
+                                {
+                                    var statusName = "";
+                                    var statusBadge = "";
+                                    var statusIndicator = "";
+                                    switch (item.Status)
+                                    {
+                                        case BusinessLayer.Enum.ItemStatus.Working:
+                                            statusName = "Работещ";
+                                            statusBadge = "badge-working";
+                                            statusIndicator = "indicator-working";
+                                            break;
+                                        case BusinessLayer.Enum.ItemStatus.Repair:
+                                            statusName = "За ремонт";
+                                            statusBadge = "badge-repair";
+                                            statusIndicator = "indicator-repair";
+                                            break;
+                                        case BusinessLayer.Enum.ItemStatus.Disposed:
+                                            statusName = "Бракуван";
+                                            statusBadge = "badge-scrapped";
+                                            statusIndicator = "indicator-scrapped";
+                                            break;
+                                    }
+                                    <tr>
+                                        <td>@item.Name</td>
+                                        <td>@item.Type</td>
+                                        <td>@item.Room.Name</td>
+                                        <td>
+                                            <span class="badge-custom @statusBadge">
+                                                <span class="status-indicator @statusIndicator"></span>
+                                                @item.Status
+                                            </span>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

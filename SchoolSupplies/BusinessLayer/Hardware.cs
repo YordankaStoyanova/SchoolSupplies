@@ -13,26 +13,24 @@ namespace BusinessLayer
         [Key]
         public int Id { get; set; }
 
-        [Required]
-        [MaxLength(50, ErrorMessage = "Name must not be more than 50 symbols!")]
-        [MinLength(2, ErrorMessage = "Name must be at least 2 symbols!")]
+        [Required(ErrorMessage = "Името е задължително!")]
+        [MaxLength(50, ErrorMessage = "Името не може да бъде повече от 50 символа!")]
+        [MinLength(2, ErrorMessage = "Името трябва да бъде поне два символа!")]
         public string Name { get; set; }
 
-        [Required(ErrorMessage = "Inventory number is required")]
+        [Required(ErrorMessage = "Инвентарният номер е задължителен!")]
         [StringLength(50, MinimumLength = 3,
-    ErrorMessage = "Inventory number  must be between  3 and 50 symbols")]
+    ErrorMessage = "Инвентарният номер трябва да е между 3 и 50 символа!")]
         [RegularExpression(@"^[A-Za-z0-9\-\/]+$",
-    ErrorMessage = "Inventory number can contain only letters, numbers, - and / ")]
+    ErrorMessage = "Инвентарният номер може да съдържа букви,числа, - и / ")]
         public string InventoryNumber { get; set; }
 
-        [Required(ErrorMessage = "Serial number is required")]
+        [Required(ErrorMessage = "Серийният номер е задължителен!")]
         [StringLength(100, MinimumLength = 5,
-     ErrorMessage = "Serial number must be between 5 and 100 symbols")]
+     ErrorMessage = "Серийният номер трябва да е между 5 и 100 символа!")]
         [RegularExpression(@"^[A-Za-z0-9]+$",
-     ErrorMessage = "Serial number can contain only letters and numbers")]
+     ErrorMessage = "Серийният номер трябва да съдържа само букви и числа!")]
         public string SerialNumber { get; set; }
-
-        public Category Category { get; set; }
 
         public Type Type { get; set; }
 
@@ -41,7 +39,6 @@ namespace BusinessLayer
         [Required]
         public ItemStatus Status { get; set; }
 
-        public User User { get; set; }
         public List<MaintenanceLog> MaintenanceLogs { get; set; } = new List<MaintenanceLog>();
         public List<Software> Softwares { get; set; }= new List<Software>();
         public Hardware()

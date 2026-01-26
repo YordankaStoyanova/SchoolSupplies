@@ -23,8 +23,6 @@ namespace DataLayer
         {
             Type typeFromDb =await dbContext.Types.FindAsync(item.Type.Id);
             if (typeFromDb != null) item.Type = typeFromDb;
-            User userFromDb = await dbContext.Users.FindAsync(item.User.Id);
-            if (userFromDb != null) item.User = userFromDb;
             License licenseFromDb = await dbContext.Licenses.FindAsync(item.License.Id);
             if (licenseFromDb != null) item.License = licenseFromDb;
             dbContext.Softwares.Add(item);
@@ -39,13 +37,12 @@ namespace DataLayer
 
             if (useNavigationalProperties)
                 query = query
-                    .Include(s => s.User)
                     .Include(s => s.MaintenanceLogs)
                     .Include(s => s.License)
                     .Include(s => s.Type);
 
             if (isReadOnly)
-                query = query.AsNoTracking();
+                query = query.AsNoTrackingWithIdentityResolution();
 
             return await query.FirstOrDefaultAsync(s => s.Id == key);
         }
@@ -56,13 +53,12 @@ namespace DataLayer
 
             if (useNavigationalProperties)
                 query = query
-                    .Include(s => s.User)
                     .Include(s => s.MaintenanceLogs)
                     .Include(s => s.License)
                     .Include(s => s.Type);
 
             if (isReadOnly)
-                query = query.AsNoTracking();
+                query = query.AsNoTrackingWithIdentityResolution();
 
             return await query.ToListAsync();
 
@@ -84,15 +80,6 @@ namespace DataLayer
                     softwareFromDb.Type = item.Type;
                 }
                 
-                User userFromDb = await dbContext.Users.FindAsync(item.User.Id);
-                if (userFromDb != null) {
-
-                    softwareFromDb.User= userFromDb;
-                }
-                else
-                {
-                    softwareFromDb.User = item.User;
-                }
                 License licenseFromDb  = await dbContext.Licenses.FindAsync(item.License.Id);
                 if (licenseFromDb != null)
                 {

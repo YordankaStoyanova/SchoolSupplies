@@ -11,11 +11,13 @@ namespace BusinessLayer
     {
         [Key]
         public int Id { get; set; }
-        [Required]
-        [Range(1, 300, ErrorMessage = "Room number must be in [1;300]")]
-        public int RoomNumber { get; set; }
-        [Required]
-        [Range(1, 3, ErrorMessage = "Floor must be in [1;3]")]
+
+
+        [Required(ErrorMessage = "Името е задължително!")]
+        [MaxLength(50, ErrorMessage = "Името не може да бъде повече от 50 символа!")]
+        [MinLength(2, ErrorMessage = "Името трябва да бъде поне два символа!")]
+        public string Name { get; set; }
+        
         public int Floor { get; set; }
         public List<Software> Softwares { get; set; } = new List<Software>();
         public List<Hardware> Hardwares { get; set; } = new List<Hardware>();
@@ -23,12 +25,12 @@ namespace BusinessLayer
         {
 
         }
-        public Room(int roomNumber, int floor)
+        public Room(string name, int floor)
         {
-            RoomNumber = roomNumber;
+            Name = name;
             Floor = floor;
         }
-        public Room(int roomNumber,int floor,List<Software> softwares,List<Hardware> hardwares):this(roomNumber,floor)
+        public Room(string name,int floor,List<Software> softwares,List<Hardware> hardwares):this(name,floor)
         {
            Softwares = softwares;
             Hardwares = hardwares;

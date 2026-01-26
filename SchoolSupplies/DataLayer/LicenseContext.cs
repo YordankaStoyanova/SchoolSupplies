@@ -35,7 +35,7 @@ namespace DataLayer
                 query = query.Include(l => l.Software);
 
             if (isReadOnly)
-                query = query.AsNoTracking();
+                query = query.AsNoTrackingWithIdentityResolution();
 
             return await query.FirstOrDefaultAsync(l => l.Id == key);
         }
@@ -48,7 +48,7 @@ namespace DataLayer
                 query = query.Include(l => l.Software);
             if (isReadOnly)
             {
-                query = query.AsNoTracking();
+                query = query.AsNoTrackingWithIdentityResolution();
             }
 
             return await query.ToListAsync();

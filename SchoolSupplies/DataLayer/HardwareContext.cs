@@ -23,8 +23,6 @@ namespace DataLayer
             if (typeFromDb != null) item.Type = typeFromDb;
             Room roomFromDb = await dbContext.Rooms.FindAsync(item.Room.Id);
             if (roomFromDb != null) item.Room = roomFromDb;
-            User userFromDb = await dbContext.Users.FindAsync(item.User.Id);
-            if (userFromDb != null) item.User = userFromDb;
             if(item.Softwares.Count != 0)
             {
                 List<Software> softwares = new List<Software>(item.Softwares.Count);
@@ -52,13 +50,12 @@ namespace DataLayer
             if (useNavigationalProperties)
                 query = query
                     .Include(h => h.Room)
-                    .Include(h => h.User)
                     .Include(h => h.MaintenanceLogs)
                     .Include(h => h.Softwares)
                     .Include(h => h.Type);
 
             if (isReadOnly)
-                query = query.AsNoTracking();
+                query = query.AsNoTrackingWithIdentityResolution();
 
             return await query.FirstOrDefaultAsync(h => h.Id == key);
         }
@@ -70,13 +67,12 @@ namespace DataLayer
             if (useNavigationalProperties)
                 query = query
                    .Include(h => h.Room)
-                    .Include(h => h.User)
                     .Include(h => h.MaintenanceLogs)
                     .Include(h => h.Softwares)
                     .Include(h => h.Type);
 
             if (isReadOnly)
-                query = query.AsNoTracking();
+                query = query.AsNoTrackingWithIdentityResolution();
 
             return await query.ToListAsync();
         }
@@ -105,16 +101,7 @@ namespace DataLayer
                 {
                     hardwareFromDb.Room = item.Room;
                 }
-                User userFromDb = await dbContext.Users.FindAsync(item.User.Id);
-                if (userFromDb != null)
-                {
-
-                    hardwareFromDb.User = userFromDb;
-                }
-                else
-                {
-                    hardwareFromDb.User = item.User;
-                }
+               
                 List<Software> softwares = new List<Software>();
                 for (int i = 0; i < item.Softwares.Count; i++)
                 {

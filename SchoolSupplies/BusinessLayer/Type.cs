@@ -12,9 +12,9 @@ namespace BusinessLayer
     {
         [Key]
         public int Id { get; set; }
-        [Required]
-        [MaxLength(50, ErrorMessage = "Name must not be more than 50 symbols!")]
-        [MinLength(2, ErrorMessage = "Name must be at least 2 symbols!")]
+        [Required(ErrorMessage = "Името е задължително!")]
+        [MaxLength(50, ErrorMessage = "Името не може да бъде повече от 50 символа!")]
+        [MinLength(2, ErrorMessage = "Името трябва да бъде поне два символа!")]
         public string Name { get; set; }
         public Type() { }
         public Type(string name)

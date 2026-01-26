@@ -30,9 +30,6 @@ namespace DataLayer.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("Category")
-                        .HasColumnType("int");
-
                     b.Property<string>("InventoryNumber")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -120,16 +117,11 @@ namespace DataLayer.Migrations
                     b.Property<int?>("SoftwareId")
                         .HasColumnType("int");
 
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.HasKey("Id");
 
                     b.HasIndex("HardwareId");
 
                     b.HasIndex("SoftwareId");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("MaintenanceLogs");
                 });
@@ -145,8 +137,10 @@ namespace DataLayer.Migrations
                     b.Property<int>("Floor")
                         .HasColumnType("int");
 
-                    b.Property<int>("RoomNumber")
-                        .HasColumnType("int");
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.HasKey("Id");
 
@@ -160,9 +154,6 @@ namespace DataLayer.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("Category")
-                        .HasColumnType("int");
 
                     b.Property<int>("LicenseId")
                         .HasColumnType("int");
@@ -184,7 +175,6 @@ namespace DataLayer.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("UserId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
@@ -450,15 +440,13 @@ namespace DataLayer.Migrations
                         .WithMany()
                         .HasForeignKey("TypeId");
 
-                    b.HasOne("BusinessLayer.User", "User")
+                    b.HasOne("BusinessLayer.User", null)
                         .WithMany("Hardwares")
                         .HasForeignKey("UserId");
 
                     b.Navigation("Room");
 
                     b.Navigation("Type");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("BusinessLayer.MaintenanceLog", b =>
@@ -471,15 +459,9 @@ namespace DataLayer.Migrations
                         .WithMany("MaintenanceLogs")
                         .HasForeignKey("SoftwareId");
 
-                    b.HasOne("BusinessLayer.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId");
-
                     b.Navigation("Hardware");
 
                     b.Navigation("Software");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("BusinessLayer.Software", b =>
@@ -500,17 +482,13 @@ namespace DataLayer.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("BusinessLayer.User", "User")
+                    b.HasOne("BusinessLayer.User", null)
                         .WithMany("Softwares")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("UserId");
 
                     b.Navigation("License");
 
                     b.Navigation("Type");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("HardwareSoftware", b =>

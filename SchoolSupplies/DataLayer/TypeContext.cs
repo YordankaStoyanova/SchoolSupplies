@@ -29,7 +29,7 @@ namespace DataLayer
             IQueryable<Type> query = dbContext.Types;
 
             if (isReadOnly)
-                query = query.AsNoTracking();
+                query = query.AsNoTrackingWithIdentityResolution();
 
             return await query.FirstOrDefaultAsync(t => t.Id == key);
         }
@@ -39,7 +39,7 @@ namespace DataLayer
 
             IQueryable<Type> query = dbContext.Types;
             if (isReadOnly)
-                query = query.AsNoTracking();
+                query = query.AsNoTrackingWithIdentityResolution();
 
             return await query.ToListAsync();
         }

@@ -1,66 +1,261 @@
-html {
-  font-size: 14px;
-}
-
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
-}
-
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-html {
-  position: relative;
-  min-height: 100%;
+﻿:root {
+    --primary-beige: #F5F1E8;
+    --secondary-cream: #E8DFCA;
+    --accent-brown: #A68B7B;
+    --dark-brown: #7D6E5D;
+    --light-beige: #FAF7F0;
 }
 
 body {
-  margin-bottom: 60px;
+    background-color: var(--primary-beige);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #333;
 }
 
-.form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
-  color: var(--bs-secondary-color);
-  text-align: end;
+/* Навигация */
+.navbar {
+    background-color: var(--dark-brown);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
 }
 
-.form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
-  text-align: start;
+.navbar-brand {
+    color: white !important;
+    font-weight: 600;
+    font-size: 1.4rem;
 }
 
-/* ===== App Theme ===== */
-
-body {
-    background-color: #f6e9d7;
+.nav-tabs {
+    border-bottom: 2px solid var(--accent-brown);
+    margin-bottom: 20px;
 }
 
-.app-header {
-    background-color: #f0d9b5;
-}
+    .nav-tabs .nav-link {
+        color: var(--dark-brown);
+        font-weight: 500;
+        border: none;
+        padding: 12px 24px;
+    }
 
-.app-card {
-    background-color: #fff6e8;
+        .nav-tabs .nav-link.active {
+            background-color: var(--accent-brown);
+            color: white;
+            border-radius: 8px 8px 0 0;
+        }
+
+/* Таблици */
+.table-container {
+    background-color: white;
     border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    padding: 20px;
+    margin-bottom: 30px;
 }
 
-.app-table thead {
-    background-color: #f0d9b5;
+.table-custom {
+    background-color: white;
 }
 
-/* ===== Status colors ===== */
-.status-working {
-    background-color: #4caf50;
+    .table-custom thead {
+        background-color: var(--secondary-cream);
+        color: var(--dark-brown);
+    }
+
+    .table-custom th {
+        border-top: none;
+        font-weight: 600;
+    }
+
+    .table-custom tbody tr:hover {
+        background-color: rgba(166, 139, 123, 0.1);
+    }
+
+/* Бейджове */
+.badge-custom {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-weight: 500;
+}
+
+.badge-working {
+    background-color: #4CAF50;
     color: white;
 }
 
-.status-repair {
-    background-color: #f4a261;
+.badge-repair {
+    background-color: #FF9800;
     color: white;
 }
 
-.status-disposed {
-    background-color: #e63946;
+.badge-scrapped {
+    background-color: #F44336;
     color: white;
 }
+
+/* Бутони */
+.btn-custom {
+    background-color: var(--accent-brown);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-weight: 500;
+    transition: all 0.3s;
+}
+
+    .btn-custom:hover {
+        background-color: var(--dark-brown);
+        color: white;
+        transform: translateY(-2px);
+    }
+
+.btn-login {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 5px;
+    font-weight: 500;
+    transition: all 0.3s;
+}
+
+    .btn-login:hover {
+        background-color: #2980b9;
+        color: white;
+        transform: translateY(-2px);
+    }
+
+/* Фиксирана височина за секции */
+.section-fixed-height {
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+/* Индикатор за статус */
+.status-indicator {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    margin-right: 8px;
+}
+
+.indicator-working {
+    background-color: #4CAF50;
+}
+
+.indicator-repair {
+    background-color: #FF9800;
+}
+
+.indicator-scrapped {
+    background-color: #F44336;
+}
+
+/* Търсачки и филтри */
+.search-filter-container {
+    background-color: white;
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.search-box {
+    position: relative;
+}
+
+    .search-box i {
+        position: absolute;
+        left: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #999;
+    }
+
+    .search-box input {
+        padding-left: 45px;
+    }
+
+/* Login модал */
+.login-tabs {
+    border-bottom: 1px solid #dee2e6;
+    margin-bottom: 20px;
+}
+
+    .login-tabs .nav-link {
+        color: var(--dark-brown);
+        font-weight: 500;
+        border: none;
+        padding: 10px 20px;
+    }
+
+        .login-tabs .nav-link.active {
+            background-color: var(--accent-brown);
+            color: white;
+            border-radius: 5px;
+        }
+
+.password-change-link {
+    color: var(--accent-brown);
+    text-decoration: none;
+    font-size: 0.9rem;
+    cursor: pointer;
+}
+
+    .password-change-link:hover {
+        text-decoration: underline;
+    }
+
+/* Responsive подобрения */
+@media (max-width: 768px) {
+    .nav-tabs .nav-link {
+        padding: 10px 15px;
+        font-size: 0.9rem;
+    }
+
+    .table-responsive {
+        font-size: 0.85rem;
+    }
+
+    .search-filter-container .row > div {
+        margin-bottom: 10px;
+    }
+}
+
+@media (max-width: 576px) {
+    .navbar-brand {
+        font-size: 1.2rem;
+    }
+
+    .table-custom th, .table-custom td {
+        padding: 10px 8px;
+    }
+}
+
+/* Гост съобщение */
+.guest-message {
+    text-align: center;
+    padding: 30px;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    margin-bottom: 30px;
+}
+
+    .guest-message i {
+        font-size: 3rem;
+        color: var(--accent-brown);
+        margin-bottom: 20px;
+    }
+
+/* Съобщение за изпратен линк */
+.email-sent-message {
+    text-align: center;
+    padding: 20px;
+}
+
+    .email-sent-message i {
+        font-size: 2.5rem;
+        color: #4CAF50;
+        margin-bottom: 15px;
+    }

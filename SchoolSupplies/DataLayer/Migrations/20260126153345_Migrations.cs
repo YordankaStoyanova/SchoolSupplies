@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace DataLayer.Migrations
 {
     /// <inheritdoc />
-    public partial class initial : Migration
+    public partial class Migrations : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -74,7 +74,7 @@ namespace DataLayer.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    RoomNumber = table.Column<int>(type: "int", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     Floor = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -210,7 +210,6 @@ namespace DataLayer.Migrations
                     Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     InventoryNumber = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     SerialNumber = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Category = table.Column<int>(type: "int", nullable: false),
                     TypeId = table.Column<int>(type: "int", nullable: true),
                     RoomId = table.Column<int>(type: "int", nullable: true),
                     Status = table.Column<int>(type: "int", nullable: false),
@@ -244,11 +243,10 @@ namespace DataLayer.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     SerialNumber = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Category = table.Column<int>(type: "int", nullable: false),
                     TypeId = table.Column<int>(type: "int", nullable: false),
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     LicenseId = table.Column<int>(type: "int", nullable: false),
-                    RoomId = table.Column<int>(type: "int", nullable: true)
+                    RoomId = table.Column<int>(type: "int", nullable: true),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -257,8 +255,7 @@ namespace DataLayer.Migrations
                         name: "FK_Softwares_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Softwares_Licenses_LicenseId",
                         column: x => x.LicenseId,
@@ -311,17 +308,11 @@ namespace DataLayer.Migrations
                     SoftwareId = table.Column<int>(type: "int", nullable: true),
                     HardwareId = table.Column<int>(type: "int", nullable: true),
                     Description = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
-                    Date = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: true)
+                    Date = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_MaintenanceLogs", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_MaintenanceLogs_AspNetUsers_UserId",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_MaintenanceLogs_Hardwares_HardwareId",
                         column: x => x.HardwareId,
@@ -402,11 +393,6 @@ namespace DataLayer.Migrations
                 name: "IX_MaintenanceLogs_SoftwareId",
                 table: "MaintenanceLogs",
                 column: "SoftwareId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_MaintenanceLogs_UserId",
-                table: "MaintenanceLogs",
-                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Softwares_LicenseId",

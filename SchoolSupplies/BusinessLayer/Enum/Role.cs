@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace BusinessLayer.Enum
 {
-    public enum UserRole
+    public enum Role
     {
-        User = 1,
-        Admin = 2
+        Administrator = 1,
+        User = 2
     }
 }

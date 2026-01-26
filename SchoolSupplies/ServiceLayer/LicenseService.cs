@@ -5,33 +5,38 @@ namespace ServiceLayer
 {
     public class LicenseService
     {
-        private readonly IDb<License, int> licenseDb;
+        private readonly IDb<License, int> _context;
 
-        public LicenseService(IDb<License, int> licenseDb)
+        public LicenseService(IDb<License, int> context)
         {
-            this.licenseDb = licenseDb;
+            _context = context;
         }
 
-        public async Task<List<License>> GetAllAsync()
-            => await licenseDb.ReadAll(true);
-
-        public async Task<License?> GetByIdAsync(int id)
-            => await licenseDb.Read(id, true);
-
-        public async Task<bool> IsExpiredAsync(int id)
+        public async Task Create(License item)
         {
-            var license = await licenseDb.Read(id);
-            return license != null &&
-                   license.ExpirationDate < DateTime.UtcNow;
+            await _context.Create(item);
         }
 
-        public async Task CreateAsync(License license)
-            => await licenseDb.Create(license);
+        public async Task<License> Read(int key, bool useNavigationalProperties = false,bool isReadOnly = false )
+        {
+            return await _context.Read(key, useNavigationalProperties,isReadOnly);
+        }
 
-        public async Task UpdateAsync(License license)
-            => await licenseDb.Update(license);
+        public async Task<List<License>> ReadAll(bool useNavigationalProperties = false,bool isReadOnly = false)
+        {
+            return await _context.ReadAll(useNavigationalProperties,isReadOnly);
+        }
 
-        public async Task DeleteAsync(int id)
-            => await licenseDb.Delete(id);
+        public async Task Update(License item, bool useNavigationalProperties = false)
+        {
+
+            await _context.Update(item, useNavigationalProperties);
+        }
+
+        public async Task Delete(int key)
+        {
+            await _context.Delete(key);
+        }
     }
 }
+

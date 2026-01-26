@@ -1,0 +1,93 @@
+﻿@using BusinessLayer
+@model List<Software>
+
+@{
+    ViewData["Title"] = "Software";
+}
+<div class="tab-content">
+    <div class="tab-pane fade show active">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="search-filter-container">
+                    <div class="row g-3">
+                        <div class="col-md-8">
+                            <div class="search-box">
+                                <i class="fas fa-search"></i>
+                                <form id="search">
+
+                                    <input type="text" name="s" id="s" class="form-control" placeholder="Търсене по име на софтуер...">
+                                </form>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <select class="form-select" id="t">
+                                @*{
+                                    var selectedType = ViewContext.RouteData.Values["t"]?.ToString();
+                                    if (string.IsNullOrWhiteSpace(selectedType))
+                                    {
+                                        <option selected value="all">Всички видове</option>
+                                        foreach (var item in Model.Select(s => s.Type).Distinct())
+                                        {
+                                            <option value="@item.Id">@item.Name</option>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <option value="all">Всички видове</option>
+                                        var type = int.Parse(selectedType);
+                                        foreach (var item in Model.Select(s => s.Type).Distinct())
+                                        {
+
+                                            if (type == item.Id)
+                                            {
+                                                <option selected value="@item.Id">@item.Name</option>
+                                            }
+                                            else
+                                            {
+                                                <option value="@item.Id">@item.Name</option>
+                                            }
+                                        }
+
+                                    }
+                                }*@
+                                @{
+                                    <option selected value="all">Всички видове</option>
+                                    foreach (var item in Model.Select(s => s.Type).Distinct())
+                                    {
+                                        <option value="@item.Id">@item.Name</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-container section-fixed-height">
+                    <div class="table-responsive">
+                        <table class="table table-custom table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Име</th>
+                                    <th>Вид</th>
+                                    <th>Лиценз</th>
+                                    <th>На устройства</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model)
+                                {
+                                    <tr>
+                                        <td>@item.Name</td>
+                                        <td>@item.Type.ToString()</td>
+                                        <td>@item.License.Status</td>
+                                        <td>@string.Join(", ", item.Hardwares.Take(2).Select(Half => Half.Name)) @(item.Hardwares.Count > 2 ? "и още" : "")</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

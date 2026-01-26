@@ -32,11 +32,11 @@ namespace DataLayer
             if (useNavigationalProperties)
                 query = query
                     .Include(m => m.Hardware)
-                    .Include(m=> m.Software)
-                    .Include(m => m.User);
+                    .Include(m => m.Software);
+                    
 
             if (isReadOnly)
-                query = query.AsNoTracking();
+                query = query.AsNoTrackingWithIdentityResolution();
 
             return await query.FirstOrDefaultAsync(m => m.Id == key);
         }
@@ -48,11 +48,10 @@ namespace DataLayer
             if (useNavigationalProperties)
                 query = query
                    .Include(m => m.Hardware)
-                    .Include(m => m.Software)
-                    .Include(m => m.User);
+                    .Include(m => m.Software);
 
             if (isReadOnly)
-                query = query.AsNoTracking();
+                query = query.AsNoTrackingWithIdentityResolution();
 
             return await query.ToListAsync();
         }
@@ -82,15 +81,7 @@ namespace DataLayer
                 {
                     logFromDb.Hardware = item.Hardware;
                 }
-                User userFromDb = await dbContext.Users.FindAsync(item.User.Id);
-                if (userFromDb != null)
-                { 
-                    logFromDb.User = userFromDb;
-                }
-                else
-                {
-                    logFromDb.User = item.User;
-                }
+               
             }
             await dbContext.SaveChangesAsync();
         }

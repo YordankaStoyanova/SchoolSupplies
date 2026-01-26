@@ -8,6 +8,9 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataLayer", "DataLayer\DataLayer.csproj", "{4A13C16C-EAD6-43DD-8DD2-AB7098F1801E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MVC", "MVC\MVC.csproj", "{027680B7-986A-4A65-9D72-9E1D91F66719}"
+	ProjectSection(ProjectDependencies) = postProject
+		{E0842CA6-8A1F-4E88-B291-1D168FB76DCA} = {E0842CA6-8A1F-4E88-B291-1D168FB76DCA}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceLayer", "ServiceLayer\ServiceLayer.csproj", "{E0842CA6-8A1F-4E88-B291-1D168FB76DCA}"
 EndProject
@@ -16,6 +19,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestLayer", "TestLayer\Test
 		{4A13C16C-EAD6-43DD-8DD2-AB7098F1801E} = {4A13C16C-EAD6-43DD-8DD2-AB7098F1801E}
 		{6AB98383-80D3-400A-A7CC-E1EE11672321} = {6AB98383-80D3-400A-A7CC-E1EE11672321}
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SeedingDB", "SeedingDB\SeedingDB.csproj", "{92C0C1D2-C02B-4CDD-B7C6-DDFD269BC7BD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -43,6 +48,10 @@ Global
 		{8BD66CB0-F01F-4A94-9609-DFF9826FE305}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8BD66CB0-F01F-4A94-9609-DFF9826FE305}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8BD66CB0-F01F-4A94-9609-DFF9826FE305}.Release|Any CPU.Build.0 = Release|Any CPU
+		{92C0C1D2-C02B-4CDD-B7C6-DDFD269BC7BD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{92C0C1D2-C02B-4CDD-B7C6-DDFD269BC7BD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{92C0C1D2-C02B-4CDD-B7C6-DDFD269BC7BD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{92C0C1D2-C02B-4CDD-B7C6-DDFD269BC7BD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
