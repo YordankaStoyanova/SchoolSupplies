@@ -1,43 +1,61 @@
-﻿using BusinessLayer;
+﻿using ApplicationLayer.ViewModels;
+using BusinessLayer;
 using BusinessLayer.Enum;
 using DataLayer;
+using Type = BusinessLayer.Type;
 
 namespace ServiceLayer
 {
     public class SoftwareService
     {
 
-        private readonly IDb<Software, int> _context;
+        private readonly IDb<Software, int> _softwareContext;
+        private readonly IDb<Hardware, int> _hardwareContext;
+        private readonly IDb<License, int> _licenseContext;
+        private readonly IDb<Type, int> _typeContext;
 
-        public SoftwareService(IDb<Software, int> context)
+        public SoftwareService(IDb<Software, int> context,IDb<Hardware,int> hardwareContext,IDb<License,int> licenseContext,IDb<Type,int> typeContext)
         {
-            _context = context;
+            _softwareContext = context;
+            _hardwareContext = hardwareContext; 
+            _licenseContext = licenseContext;
+            _typeContext = typeContext;
         }
 
-        public async Task Create(Software item)
+       
+        public async Task Create(SoftwareViewModel item)
         {
-            await _context.Create(item);
+            var type = await _typeContext.Read(item.TypeId);
+            var license = await _licenseContext.Read(item.LicenseId);
+            var hardwares = new List<Hardware>();
+            foreach (var id in item.HardwareIds)
+            {
+                var hardware = await _hardwareContext.Read(id);
+                if (hardware != null) hardwares.Add(hardware);
+            }
+            var software = new Software(item.Name, item.SerialNumber, type, hardwares,license);
+            await _softwareContext.Create(software);
         }
 
         public async Task<Software> Read(int key, bool useNavigationalProperties = false, bool isReadOnly = false)
         {
-            return await _context.Read(key, useNavigationalProperties,isReadOnly);
+            return await _softwareContext.Read(key, useNavigationalProperties,isReadOnly);
         }
 
         public async Task<List<Software>> ReadAll(bool useNavigationalProperties = false,bool isReadOnly = false)
         {
-            return await _context.ReadAll(useNavigationalProperties,isReadOnly);
+            return await _softwareContext.ReadAll(useNavigationalProperties,isReadOnly);
         }
 
         public async Task Update(Software item, bool useNavigationalProperties = false)
         {
 
-            await _context.Update(item, useNavigationalProperties);
+            await _softwareContext.Update(item, useNavigationalProperties);
         }
 
         public async Task Delete(int key)
         {
-            await _context.Delete(key);
+            await _softwareContext.Delete(key);
         }
         private List<Software> SearchByType(List<Software> softwares,int? typeId)
         {
@@ -48,18 +66,19 @@ namespace ServiceLayer
         public async Task<int> SoftwareActive()
         {
             List<Software> softwares = await ReadAll(true);
-            return softwares.Count(s=> s.License.Status == LicenseStatus.Active);
+            return softwares.Count(s=> s.License.ExpirationDate<=DateTime.Now);
         }
         public async Task<int> SoftwaresExpired()
         {
             List<Software> softwares = await ReadAll(true);
-            return softwares.Count(s => s.License.Status == LicenseStatus.Expired);
+            return softwares.Count(s => s.License.ExpirationDate > DateTime.Now);
         }
 
         private List<Software> SearchByParameter(List<Software> softwares, string parameter)
         {
             if(string.IsNullOrWhiteSpace(parameter)) return softwares;
-            var filteredSoftwares = softwares.Where(h => h.Name == parameter || h.SerialNumber ==parameter).ToList();
+            parameter= parameter.Trim().ToLower();
+            var filteredSoftwares = softwares.Where(h => h.Name.ToLower().Contains(parameter) || h.SerialNumber.ToLower().Contains(parameter)).ToList();
             return filteredSoftwares;
         }
         public async Task<List<Software>> SearchCombined(string parameter, int? typeId)

@@ -54,6 +54,9 @@ namespace  MVC.Areas.Identity.Pages.Account.Manage
         ///     directly from your code. This API may change or be removed in future releases.
         /// </summary>
         public static string PersonalData => "PersonalData";
+        public static string Hardware => "Hardware";
+        public static string Software => "Software";
+        public static string Administration => "Administration";
 
         /// <summary>
         ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
@@ -102,6 +105,9 @@ namespace  MVC.Areas.Identity.Pages.Account.Manage
         ///     directly from your code. This API may change or be removed in future releases.
         /// </summary>
         public static string PersonalDataNavClass(ViewContext viewContext) => PageNavClass(viewContext, PersonalData);
+        public static string HardwareNavClass(ViewContext viewContext) => PageNavClass(viewContext, Hardware);
+        public static string SoftwareNavClass(ViewContext viewContext) => PageNavClass(viewContext, Software);
+        public static string AdministrationNavClass(ViewContext viewContext) => PageNavClass(viewContext, Administration);
 
         /// <summary>
         ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used

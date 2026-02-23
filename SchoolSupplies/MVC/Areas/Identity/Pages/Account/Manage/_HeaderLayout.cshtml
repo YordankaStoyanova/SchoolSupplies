@@ -1,0 +1,18 @@
+﻿<nav class="navbar navbar-expand-lg navbar-dark">
+    <div class="container-fluid">
+        <span class="navbar-brand">
+            <i class="fas fa-school me-2"></i>Управление на училищен инвентар
+        </span>
+        <div class="d-flex align-items-center text-light">
+            <div class="me-3">
+                <div class="fw-bold">Администратор</div>
+                <small>Системен администратор</small>
+            </div>
+            <form id="logoutForm" class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+            <button type="submit" class="btn btn-sm btn-outline-light">
+                <i class="fas fa-sign-out-alt"></i>
+            </button>
+            </form>
+        </div>
+    </div>
+</nav>

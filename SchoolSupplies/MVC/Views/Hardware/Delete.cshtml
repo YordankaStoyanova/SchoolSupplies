@@ -1,0 +1,160 @@
+﻿@using BusinessLayer
+@model Hardware
+@{
+    ViewData["Title"] = "Изтриване на хардуер";
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Управление на училищен инвентар</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Стилове за details-container, info-label и др. */
+        :root {
+            --primary-beige: #F5F1E8;
+            --secondary-cream: #E8DFCA;
+            --accent-brown: #A68B7B;
+            --dark-brown: #7D6E5D;
+        }
+
+        body {
+            background-color: var(--primary-beige);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .navbar {
+            background-color: var(--dark-brown);
+        }
+
+        .navbar-brand {
+            color: white !important;
+            font-weight: 600;
+            font-size: 1.5rem;
+        }
+
+        .details-container {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            padding: 30px;
+            margin-top: 20px;
+        }
+
+        .details-header {
+            border-bottom: 2px solid var(--accent-brown);
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+        }
+
+        .details-title {
+            color: var(--dark-brown);
+            font-weight: 600;
+        }
+
+        .info-label {
+            color: var(--dark-brown);
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+
+        .info-value {
+            font-size: 1.1rem;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .btn-custom {
+            background-color: var(--accent-brown);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+            .btn-custom:hover {
+                background-color: var(--dark-brown);
+                transform: translateY(-2px);
+            }
+
+        .btn-danger {
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-weight: 500;
+        }
+
+            .btn-danger:hover {
+                background-color: #c0392b;
+                transform: translateY(-2px);
+            }
+
+        .breadcrumb-custom {
+            background-color: transparent;
+            padding: 0;
+            margin-bottom: 20px;
+        }
+
+            .breadcrumb-custom .breadcrumb-item a {
+                color: var(--accent-brown);
+                text-decoration: none;
+            }
+
+            .breadcrumb-custom .breadcrumb-item.active {
+                color: var(--dark-brown);
+            }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/"><i class="fas fa-school me-2"></i>Управление на училищен инвентар</a>
+        </div>
+    </nav>
+
+<div class="details-container">
+    <div class="details-header">
+        <h2 class="details-title">Изтриване на хардуер</h2>
+    </div>
+
+    <h5>Сигурни ли сте, че искате да изтриете този хардуер?</h5>
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <div class="info-section">
+                <div class="info-label">Инвентарен номер</div>
+                <div class="info-value">@Model.InventoryNumber</div>
+                <div class="info-label">Сериен номер</div>
+                <div class="info-value">@Model.SerialNumber</div>
+                <div class="info-label">Име</div>
+                <div class="info-value">@Model.Name</div>
+                <div class="info-label">Локация</div>
+                <div class="info-value">@Model.Room.Name</div>
+                <div class="info-label">Статус</div>
+                <div class="info-value">@Model.Status</div>
+            </div>
+        </div>
+    </div>
+
+    <form asp-action="Delete" method="post" class="mt-4">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="Id" />
+        <div class="d-flex justify-content-between">
+
+            <a class="btn btn-custom" asp-area="Identity" asp-page="/Account/Manage/Hardware">
+                <i class="fas fa-arrow-left me-2"></i> Назад
+            </a>
+            <button type="submit" class="btn btn-danger">
+                <i class="fas fa-trash-alt me-2"></i>Изтрий
+            </button>
+        </div>
+    </form>
+</div>
+</body>
+</html>

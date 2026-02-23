@@ -1,0 +1,40 @@
+﻿@using BusinessLayer
+@model User
+@{
+    ViewData["Title"] = "Детайли за потребител";
+}
+
+<div class="details-container">
+    <div class="details-header">
+        <div class="d-flex justify-content-between align-items-center">
+            <h2 class="details-title">Детайли за потребител</h2>
+            <a class="btn btn-custom" asp-action="Index">
+                <i class="fas fa-arrow-left me-2"></i> Назад
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="info-section">
+                <h5 class="info-label">Основна информация</h5>
+                <div class="info-value"><strong>Име:</strong> @Model.Name</div>
+                <div class="info-value"><strong>Имейл:</strong> @Model.Email</div>
+                <div class="info-value"><strong>Телефонен номер:</strong> @Model.PhoneNumber</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-4 pt-3 border-top">
+        <div class="d-flex justify-content-between">
+            <div>
+                <a class="btn btn-warning me-2" asp-action="Edit" asp-route-id="@Model.Id">
+                    <i class="fas fa-edit me-2"></i> Редактиране
+                </a>
+                <a class="btn btn-danger" asp-action="Delete" asp-route-id="@Model.Id">
+                    <i class="fas fa-trash-alt me-2"></i> Изтриване
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

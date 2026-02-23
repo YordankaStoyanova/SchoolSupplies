@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -45,6 +46,15 @@ namespace BusinessLayer
         {
 
         }
-
+        public Hardware(string name, string inventoryNumber, string serialNumber, Type type,Room room,ItemStatus status, List<Software> softwares)
+        {
+            Name = name;
+            InventoryNumber = inventoryNumber;  
+            SerialNumber = serialNumber;
+            Type = type;
+            Room = room;
+            Status = status;
+            Softwares = softwares;
+        }
     }
 }

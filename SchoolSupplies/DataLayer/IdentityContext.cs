@@ -15,31 +15,35 @@ namespace DataLayer
     {
         private readonly SchoolSuppliesDbContext _context;
         private readonly UserManager<User> _userManager;
+        private readonly RoleManager<User> _roleManager;
 
-        public IdentityContext(SchoolSuppliesDbContext context, UserManager<User> userManager)
+        public IdentityContext(SchoolSuppliesDbContext context, UserManager<User> userManager, RoleManager<User> roleManager)
         {
             _context = context;
             _userManager = userManager;
+            _roleManager = roleManager;
         }
 
-        public async Task<IdentityUser> CreateUserAsync(string name, string password, string email, Role role)
+        public async Task<User> CreateUserAsync(string name, string password, string email, string role)
         {
-            try
+            var user = new User
             {
-                var user = new User(email, name,password,role);
-                var result = await _userManager.CreateAsync(user, password);
+                UserName = email,
+                Email = email,
+                Name = name
+            };
 
-                if (!result.Succeeded) throw new ArgumentException(result.Errors.First().Description);
+            var result = await _userManager.CreateAsync(user, password);
 
-                if (role == Role.Administrator)
-                    await _userManager.AddToRoleAsync(user, Role.Administrator.ToString());
-                else if (role == Role.User) await _userManager.AddToRoleAsync(user, Role.User.ToString());
-                return user;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
+            if (!result.Succeeded)
+                throw new ArgumentException(result.Errors.First().Description);
+
+            if (!await _roleManager.RoleExistsAsync(role))
+                throw new ArgumentException("Role does not exist");
+
+            await _userManager.AddToRoleAsync(user, role);
+
+            return user;
         }
 
         public async Task<User> LogInUserAsync(string email, string password)
@@ -65,9 +69,7 @@ namespace DataLayer
 
         public async Task<User> ReadUserAsync(string key)
         {
-            var query = _context.Users
-                .Include(h => h.Hardwares)
-                .Include(s => s.Softwares);
+            var query = _context.Users;
             var user = await query.FirstOrDefaultAsync(u => u.Id == key);
             return user;
         }

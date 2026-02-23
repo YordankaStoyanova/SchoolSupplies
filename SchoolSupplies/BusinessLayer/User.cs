@@ -15,26 +15,11 @@ namespace BusinessLayer
         [Required]
         [MaxLength(30)]
         public string Name { get; set; } 
-        public List<Software> Softwares { get; set; } = new List<Software>();
-        public List<Hardware> Hardwares { get; set; } = new List<Hardware>();
-        public Role Role { get; set; }
+  
         public User()
         {
         }
-
-        public User(string email, string name, string password,Role role=Role.User)
-        {
-            Email = email;
-            Role = role;
-            Name = name;
-            var passwordHasher = new PasswordHasher<User>();
-            PasswordHash = passwordHasher.HashPassword(this, password);
-        }
-        public User(string email,string name,string password,List<Hardware> hardwares, List<Software> softwares ,Role role = Role.User) : this(email, name, password, role)
-        {
-            Hardwares = hardwares;
-            Softwares = softwares;
-        }
+       
 
     }
 }

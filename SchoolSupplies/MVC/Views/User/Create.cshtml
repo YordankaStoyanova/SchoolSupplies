@@ -1,0 +1,61 @@
+﻿@using BusinessLayer
+@model User
+@{
+    ViewData["Title"] = "Добавяне на потребител";
+ 
+}
+
+<div class="form-container">
+    <h2>Добавяне на нов потребител</h2>
+    <hr />
+
+    <form asp-action="Create" method="post">
+        @Html.AntiForgeryToken()
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label asp-for="Name" class="form-label">Име </label>
+                    <input asp-for="Name" class="form-control" required />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Email" class="form-label">Имейл </label>
+                    <input asp-for="Email" type="email" class="form-control" required />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+
+                <div class="mb-3">
+                    <label asp-for="PasswordHash" class="form-label">Парола</label>
+                    <input asp-for="PasswordHash" type="password" class="form-control" placeholder="Оставете празно за генериране на случайна парола" />
+                    <small class="text-muted">Ако оставите празно, ще се генерира автоматично.</small>
+                    <span asp-validation-for="PasswordHash" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="PhoneNumber" class="form-label">Телефонен номер</label>
+                    <input asp-for="PhoneNumber" type="tel" class="form-control" pattern="^(\+359|0)[0-9]{9}$" />
+                    <span asp-validation-for="PhoneNumberConfirmed" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-between mt-4">
+            <a class="btn btn-secondary" asp-action="Index">
+                <i class="fas fa-arrow-left me-2"></i>Назад
+            </a>
+            <button type="submit" class="btn btn-custom">
+                <i class="fas fa-save me-2"></i>Запази
+            </button>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

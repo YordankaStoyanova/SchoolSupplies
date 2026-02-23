@@ -26,6 +26,10 @@ namespace BusinessLayer
             Date = DateTime.UtcNow;
          
         }
+        public override string ToString()
+        {
+            return $"{Date} - {Description}";
+        }
 
     }
 }

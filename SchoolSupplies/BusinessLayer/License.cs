@@ -19,6 +19,7 @@ namespace BusinessLayer
         public string Name { get; set; }
 
         public int Usage => Software.Hardwares.Count;
+        [Required]
 
         public int MaxUsage {  get; set; }
        
@@ -30,8 +31,6 @@ namespace BusinessLayer
     
         public Software Software { get; set; }
 
-        [Required]
-        public LicenseStatus Status { get; set; }
         public License()
         {
 

@@ -1,37 +1,43 @@
-﻿using BusinessLayer.Enum;
-using BusinessLayer;
+﻿using BusinessLayer;
+using BusinessLayer.Enum;
 using System.ComponentModel.DataAnnotations;
-
-namespace MVC.Models
+namespace ApplicationLayer.ViewModels
 {
     public class HardwareViewModel
     {
-            public int Id { get; set; }
 
-            [Required(ErrorMessage = "Name is required")]
-            [StringLength(100, ErrorMessage = "Name cannot exceed 100 characters")]
-            public string Name { get; set; }
+        public int Id { get; set; }
 
-            [StringLength(50, ErrorMessage = "Serial number cannot exceed 50 characters")]
-            public string SerialNumber { get; set; }
+        [Required(ErrorMessage = "Името е задължително!")]
+        [MaxLength(50, ErrorMessage = "Името не може да бъде повече от 50 символа!")]
+        [MinLength(2, ErrorMessage = "Името трябва да бъде поне два символа!")]
+        public string Name { get; set; }
 
-            [Required(ErrorMessage = "Category is required")]
-            public Category Category { get; set; }
+        [Required(ErrorMessage = "Инвентарният номер е задължителен!")]
+        [StringLength(50, MinimumLength = 3,
+    ErrorMessage = "Инвентарният номер трябва да е между 3 и 50 символа!")]
+        [RegularExpression(@"^[A-Za-z0-9\-\/]+$",
+    ErrorMessage = "Инвентарният номер може да съдържа букви,числа, - и / ")]
+        public string InventoryNumber { get; set; }
 
-            [Required(ErrorMessage = "Status is required")]
-            public ItemStatus Status { get; set; }
+        [Required(ErrorMessage = "Серийният номер е задължителен!")]
+        [StringLength(100, MinimumLength = 5,
+     ErrorMessage = "Серийният номер трябва да е между 5 и 100 символа!")]
+        [RegularExpression(@"^[A-Za-z0-9]+$",
+     ErrorMessage = "Серийният номер трябва да съдържа само букви и числа!")]
+        public string SerialNumber { get; set; }
 
-            [Required(ErrorMessage = "Type is required")]
-            [Display(Name = "Type")]
-            public int TypeId { get; set; }
-            public BusinessLayer.Type Type { get; set; }
+        public int TypeId { get; set; }
 
-            [Required(ErrorMessage = "Room is required")]
-            [Display(Name = "Room")]
-            public int RoomId { get; set; }
-            public Room Room { get; set; }
+        public int RoomId { get; set; }
 
-            public List<int> SelectedSoftwareIds { get; set; } = new List<int>();
-            public List<Software> AvailableSoftwares { get; set; } = new List<Software>();
-        }
+        [Required]
+        public ItemStatus Status { get; set; }
+
+        public List<MaintenanceLog> MaintenanceLogs { get; set; } = new List<MaintenanceLog>();
+        public List<int> SoftwareIds { get; set; } = new List<int>();
+    
+
     }
+}
+

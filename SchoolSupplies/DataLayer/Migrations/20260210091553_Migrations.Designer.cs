@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataLayer.Migrations
 {
     [DbContext(typeof(SchoolSuppliesDbContext))]
-    [Migration("20260126153345_Migrations")]
+    [Migration("20260210091553_Migrations")]
     partial class Migrations
     {
         /// <inheritdoc />
@@ -57,16 +57,11 @@ namespace DataLayer.Migrations
                     b.Property<int?>("TypeId")
                         .HasColumnType("int");
 
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.HasKey("Id");
 
                     b.HasIndex("RoomId");
 
                     b.HasIndex("TypeId");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("Hardwares");
                 });
@@ -177,9 +172,6 @@ namespace DataLayer.Migrations
                     b.Property<int>("TypeId")
                         .HasColumnType("int");
 
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.HasKey("Id");
 
                     b.HasIndex("LicenseId")
@@ -188,8 +180,6 @@ namespace DataLayer.Migrations
                     b.HasIndex("RoomId");
 
                     b.HasIndex("TypeId");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("Softwares");
                 });
@@ -258,9 +248,6 @@ namespace DataLayer.Migrations
 
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
-
-                    b.Property<int>("Role")
-                        .HasColumnType("int");
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
@@ -443,10 +430,6 @@ namespace DataLayer.Migrations
                         .WithMany()
                         .HasForeignKey("TypeId");
 
-                    b.HasOne("BusinessLayer.User", null)
-                        .WithMany("Hardwares")
-                        .HasForeignKey("UserId");
-
                     b.Navigation("Room");
 
                     b.Navigation("Type");
@@ -484,10 +467,6 @@ namespace DataLayer.Migrations
                         .HasForeignKey("TypeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("BusinessLayer.User", null)
-                        .WithMany("Softwares")
-                        .HasForeignKey("UserId");
 
                     b.Navigation("License");
 
@@ -580,13 +559,6 @@ namespace DataLayer.Migrations
             modelBuilder.Entity("BusinessLayer.Software", b =>
                 {
                     b.Navigation("MaintenanceLogs");
-                });
-
-            modelBuilder.Entity("BusinessLayer.User", b =>
-                {
-                    b.Navigation("Hardwares");
-
-                    b.Navigation("Softwares");
                 });
 #pragma warning restore 612, 618
         }

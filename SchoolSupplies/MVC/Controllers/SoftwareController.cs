@@ -1,12 +1,16 @@
-﻿using BusinessLayer;
+﻿using ApplicationLayer.ViewModels;
+using BusinessLayer;
+using DataLayer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.EntityFrameworkCore;
 using ServiceLayer;
 
 namespace MVC.Controllers
 {
-    public class SoftwareController(SoftwareService softwareService) : Controller
+    public class SoftwareController(SoftwareService softwareService,HardwareService hardwareService, IDb<BusinessLayer.Type, int> typeContext, LicenseService licenseService) : Controller
     {
        // private readonly ILogger<SoftwareController> _logger;
         // GET: Softwares
@@ -16,8 +20,7 @@ namespace MVC.Controllers
             return View(softwares);
         }
 
-        [Authorize(Roles = "User")]
-        [Authorize(Roles = "Administartor")]
+        [Authorize(Roles = "Administrator,User")]
         // GET: Softwares/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -26,7 +29,7 @@ namespace MVC.Controllers
                 return NotFound();
             }
 
-            var software = await softwareService.Read((int)id);
+            var software = await softwareService.Read(id.Value);
             if (software == null)
             {
                 return NotFound();
@@ -35,37 +38,68 @@ namespace MVC.Controllers
             return View(software);
         }
   
-        [Authorize(Roles = "Administartor")]
+        [Authorize(Roles = "Administrator")]
         // GET: Softwares/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
+            ViewBag.SoftwareTypes = new SelectList(await typeContext.ReadAll(false, true), "Id", "Name");
+            ViewBag.License = new SelectList(await licenseService.ReadAll(false, true), "Id", "Name");
+            ViewBag.HardwareIds = new SelectList(await hardwareService.ReadAll(false, true), "Id", "Name");
             return View();
+            
         }
       
-        [Authorize(Roles = "Administartor")]
+        [Authorize(Roles = "Administrator")]
         // POST: Softwares/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Name,SerialNumber,Category,Type,MaintanceLogs,License")] Software software)
+        public async Task<IActionResult> Create([Bind("Name,SerialNumber,TypeId,LicenseId,HardwareIds")] SoftwareViewModel model)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
-                    await softwareService.Create(software);
-                    return RedirectToAction(nameof(Index));
+                    await softwareService.Create(model);
+                    return RedirectToPage("/Account/Manage/Softwareware", new { area = "Identity" });
                 }
-                return View(software);
+                return View(model);
             }
             catch (Exception ex)
             {
                 return NotFound();
             }
         }
-     
-        [Authorize(Roles = "Administartor")]
+        [Authorize(Roles = "Administrator")]
+        // GET: Hardwares/Create
+        public IActionResult License()
+        {
+            return View();
+        }
+
+        [Authorize(Roles = "Administrator")]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> License([Bind("Name,Usage,MaxUsage,ExparationDate,Status")] License license)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    await licenseService.Create(license);
+                    return RedirectToPage("/Account/Manage/Software", new { area = "Identity" });
+                }
+                return View(license);
+            }
+            catch (Exception ex)
+            {
+                return NotFound();
+            }
+        }
+
+        [Authorize(Roles = "Administrator")]
         // GET: Softwares/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
@@ -74,14 +108,14 @@ namespace MVC.Controllers
                 return NotFound();
             }
 
-            var software = await softwareService.Read((int)id);
+            var software = await softwareService.Read(id.Value);
             if (software == null)
             {
                 return NotFound();
             }
             return View(software);
         }
-        [Authorize(Roles = "Administartor")]
+        [Authorize(Roles = "Administrator")]
         // POST: Softwares/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
@@ -110,7 +144,7 @@ namespace MVC.Controllers
             // return RedirectToAction(nameof(Index)); ?
         }
 
-        [Authorize(Roles = "Administartor")]
+        [Authorize(Roles = "Administrator")]
         // GET: Softwares/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
@@ -119,7 +153,7 @@ namespace MVC.Controllers
                 return NotFound();
             }
 
-            var software = await softwareService.Read((int)id);
+            var software = await softwareService.Read(id.Value);
             if (software == null)
             {
                 return NotFound();
@@ -127,7 +161,7 @@ namespace MVC.Controllers
 
             return View(software);
         }
-        [Authorize(Roles = "Administartor")]
+        [Authorize(Roles = "Administrator")]
         // POST: Softwares/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]

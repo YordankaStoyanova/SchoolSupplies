@@ -31,7 +31,6 @@ namespace DataLayer.Migrations
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
-                    Role = table.Column<int>(type: "int", nullable: false),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -212,17 +211,11 @@ namespace DataLayer.Migrations
                     SerialNumber = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     TypeId = table.Column<int>(type: "int", nullable: true),
                     RoomId = table.Column<int>(type: "int", nullable: true),
-                    Status = table.Column<int>(type: "int", nullable: false),
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: true)
+                    Status = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Hardwares", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Hardwares_AspNetUsers_UserId",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Hardwares_Rooms_RoomId",
                         column: x => x.RoomId,
@@ -245,17 +238,11 @@ namespace DataLayer.Migrations
                     SerialNumber = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     TypeId = table.Column<int>(type: "int", nullable: false),
                     LicenseId = table.Column<int>(type: "int", nullable: false),
-                    RoomId = table.Column<int>(type: "int", nullable: true),
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: true)
+                    RoomId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Softwares", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Softwares_AspNetUsers_UserId",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Softwares_Licenses_LicenseId",
                         column: x => x.LicenseId,
@@ -375,11 +362,6 @@ namespace DataLayer.Migrations
                 column: "TypeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Hardwares_UserId",
-                table: "Hardwares",
-                column: "UserId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_HardwareSoftware_SoftwaresId",
                 table: "HardwareSoftware",
                 column: "SoftwaresId");
@@ -409,11 +391,6 @@ namespace DataLayer.Migrations
                 name: "IX_Softwares_TypeId",
                 table: "Softwares",
                 column: "TypeId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Softwares_UserId",
-                table: "Softwares",
-                column: "UserId");
         }
 
         /// <inheritdoc />
@@ -444,13 +421,13 @@ namespace DataLayer.Migrations
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
+                name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
                 name: "Hardwares");
 
             migrationBuilder.DropTable(
                 name: "Softwares");
-
-            migrationBuilder.DropTable(
-                name: "AspNetUsers");
 
             migrationBuilder.DropTable(
                 name: "Licenses");

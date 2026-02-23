@@ -76,11 +76,25 @@
                             <tbody>
                                 @foreach (var item in Model)
                                 {
+
+                                    var statusName = "";
+                                    var statusBadge = "";
+
+                                    if (item.License.ExpirationDate > DateTime.Now)
+                                    {
+                                        statusName = "Активен";
+                                        statusBadge = "bg-success";
+                                    }
+                                    else
+                                    {
+                                        statusName = "Изтекъл";
+                                        statusBadge = "bg-danger";
+                                    }
                                     <tr>
                                         <td>@item.Name</td>
-                                        <td>@item.Type.ToString()</td>
-                                        <td>@item.License.Status</td>
-                                        <td>@string.Join(", ", item.Hardwares.Take(2).Select(Half => Half.Name)) @(item.Hardwares.Count > 2 ? "и още" : "")</td>
+                                        <td>@item.Type.Name</td>
+                                        <td> <span class="badge @statusBadge ">@statusName</span></td>
+                                        <td>@string.Join(", ", item.Hardwares.Take(2).Select(h => h.Name).ToList()) @(item.Hardwares?.Count > 2 ? "и още" : "")</td>
                                     </tr>
                                 }
                             </tbody>
@@ -91,3 +105,4 @@
         </div>
     </div>
 </div>
+  

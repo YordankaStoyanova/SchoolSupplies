@@ -1,4 +1,4 @@
-﻿using BusinessLayer.Enum;
+﻿using BusinessLayer;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -6,10 +6,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BusinessLayer
+namespace ApplicationLayer.ViewModels
 {
-    public class Software
+    public class SoftwareViewModel
     {
+
         [Key]
         public int Id { get; set; }
 
@@ -27,23 +28,11 @@ namespace BusinessLayer
         public string SerialNumber { get; set; }
 
         [Required]
-        public Type Type { get; set; }
+        public int TypeId { get; set; }
         public List<MaintenanceLog> MaintenanceLogs { get; set; } = new List<MaintenanceLog>();
         public int LicenseId { get; set; }
-        [Required]
-        public License License { get; set; }
-        public List <Hardware> Hardwares { get; set; } = new List<Hardware> { };
-        public Software ()
-        {
-
-        }
-        public Software(string name,string serialNumber,Type type,List<Hardware> hardwares,License license)
-        {
-            Name = name;
-            SerialNumber = serialNumber;
-            Type = type;
-            Hardwares = hardwares;
-            License = license;
-        }
+        
+        public List<int> HardwareIds { get; set; } = new List<int> { };
+       
     }
 }
