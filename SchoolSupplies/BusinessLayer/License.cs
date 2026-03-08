@@ -16,25 +16,22 @@ namespace BusinessLayer
 
         [Required]
         [MaxLength(100)]
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
 
-        public int Usage => Software.Hardwares.Count;
         [Required]
-
-        public int MaxUsage {  get; set; }
-       
-
+        public int MaxUsage { get; set; }
 
         [Required]
         public DateTime ExpirationDate { get; set; }
 
-    
-        public Software Software { get; set; }
+        // 1 License -> many Softwares
+        public List<Software> Softwares { get; set; } = new();
 
-        public License()
-        {
+        // общо инсталации по всички софтуери с този лиценз
+        public int Usage => Softwares?.Sum(s => s.Hardwares?.Count ?? 0) ?? 0;
 
-        }
+        public License() { }
+
         public License(string name, DateTime expirationDate, int maxUsage)
         {
             Name = name;

@@ -99,6 +99,21 @@
             border: none;
         }
 
+            .btn-danger:hover {
+                background-color: #e74c3c;
+                color: black;
+            }
+
+        .btn-maintenance {
+            background-color: #3498db;
+            color: white;
+            border: none;
+        }
+
+            .btn-maintenance:hover {
+                background-color: #2980b9;
+            }
+
         .breadcrumb-custom {
             background-color: transparent;
             padding: 0;
@@ -154,24 +169,26 @@
                 <div class="info-value">Име: @Model.Name</div>
                 <div class="info-value">Вид: @Model.Type?.Name</div>
                 <div class="info-value">Локация: @Model.Room?.Name</div>
-                <div class="info-value">Статус: @Model.Status</div>
+                    <div class="info-value">Статус: @Html.DisplayFor(model => model.Status)</div>
             </div>
         </div>
         <div class="col-md-6">
             <div class="info-section">
                 <h5 class="info-label">История на поддръжката</h5>
-                @if (Model.MaintenanceLogs.Any())
-                {
-                    @foreach (var item in @Model.MaintenanceLogs)
-                    {
-                        <div class="info-value">@item</div>
-                    }
-                }
-                else
-                {
-                    <div class="info-value">Няма история</div>
 
-                }
+                        @if (Model.MaintenanceLogs != null && Model.MaintenanceLogs.Any())
+                        {
+                            foreach (var log in Model.MaintenanceLogs.OrderByDescending(l => l.Date))
+                            {
+                                <div class="info-value">
+                                    @log.Date.ToLocalTime().ToString("dd.MM.yyyy HH:mm") - @log.Description
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <div class="info-value">Няма история</div>
+                        }
             </div>
             <div class="info-section">
                 <h5 class="info-label">Инсталиран софтуер</h5>
@@ -202,6 +219,9 @@
                         </a>
                         <a class="btn btn-danger" asp-action="Delete" asp-route-id="@Model.Id">
                             <i class="fas fa-trash-alt me-2"></i> Изтриване
+                        </a>
+                        <a class="btn btn-maintenance" asp-action="AddMaintenance" asp-route-id="@Model.Id">
+                            <i class="fas fa-tools me-2"></i> Добави поддръжка
                         </a>
                     </div>
                 </div>

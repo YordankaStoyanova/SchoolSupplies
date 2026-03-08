@@ -82,9 +82,6 @@ namespace DataLayer.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.ToTable("Licenses");
@@ -171,8 +168,7 @@ namespace DataLayer.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("LicenseId")
-                        .IsUnique();
+                    b.HasIndex("LicenseId");
 
                     b.HasIndex("RoomId");
 
@@ -436,11 +432,13 @@ namespace DataLayer.Migrations
                 {
                     b.HasOne("BusinessLayer.Hardware", "Hardware")
                         .WithMany("MaintenanceLogs")
-                        .HasForeignKey("HardwareId");
+                        .HasForeignKey("HardwareId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("BusinessLayer.Software", "Software")
                         .WithMany("MaintenanceLogs")
-                        .HasForeignKey("SoftwareId");
+                        .HasForeignKey("SoftwareId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("Hardware");
 
@@ -450,9 +448,9 @@ namespace DataLayer.Migrations
             modelBuilder.Entity("BusinessLayer.Software", b =>
                 {
                     b.HasOne("BusinessLayer.License", "License")
-                        .WithOne("Software")
-                        .HasForeignKey("BusinessLayer.Software", "LicenseId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .WithMany("Softwares")
+                        .HasForeignKey("LicenseId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("BusinessLayer.Room", null)
@@ -462,7 +460,7 @@ namespace DataLayer.Migrations
                     b.HasOne("BusinessLayer.Type", "Type")
                         .WithMany()
                         .HasForeignKey("TypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("License");
@@ -543,7 +541,7 @@ namespace DataLayer.Migrations
 
             modelBuilder.Entity("BusinessLayer.License", b =>
                 {
-                    b.Navigation("Software");
+                    b.Navigation("Softwares");
                 });
 
             modelBuilder.Entity("BusinessLayer.Room", b =>

@@ -14,6 +14,20 @@ namespace MVC.Controllers
 {
     public class HardwareController(HardwareService hardwareService, SoftwareService softwareService, IDb<BusinessLayer.Type,int> typeContext, IDb<Room,int> roomContext) : Controller
     {
+        private async Task LoadHardwareDropdownsAsync(
+        List<int>? selectedSoftwareIds = null,
+        int? selectedTypeId = null,
+        int? selectedRoomId = null)
+        {
+            ViewBag.SoftwareList = new SelectList(
+                await softwareService.ReadAll(true, true), "Id", "Name", selectedSoftwareIds);
+
+            ViewBag.Types = new SelectList(
+                await typeContext.ReadAll(false, true), "Id", "Name", selectedTypeId);
+
+            ViewBag.Rooms = new SelectList(
+                await roomContext.ReadAll(false, true), "Id", "Name", selectedRoomId);
+        }
 
         // GET: Hardwares
         public async Task<IActionResult> Index(string? s,ItemStatus? t, int? r)
@@ -33,90 +47,166 @@ namespace MVC.Controllers
                 return NotFound();
             }
 
-            var hardware = await hardwareService.Read(id.Value);
+            var hardware = await hardwareService.Read((int)id, useNavigationalProperties: true, isReadOnly: true);
             if (hardware == null)
             {
                 return NotFound();
             }
+            ViewBag.InstalledSoftware = hardware.Softwares?
+            .Select(s => s.Name)
+            .ToList() ?? new List<string>();
 
             return View(hardware);
         }
         [Authorize(Roles = "Administrator")]
-        // GET: Hardwares/Create
-        public async  Task<IActionResult> Create()
+        public async Task<IActionResult> Create()
         {
-            ViewBag.SoftwareList = new SelectList(await softwareService.ReadAll(false,true), "Id", "Name");
-            ViewBag.Types = new SelectList(await typeContext.ReadAll(false,true), "Id", "Name");
-            ViewBag.Rooms = new SelectList(await roomContext.ReadAll(false,true), "Id", "Name");
-            return View();
+            await LoadHardwareDropdownsAsync();
+            return View(new HardwareViewModel());
         }
+
         [Authorize(Roles = "Administrator")]
-        // POST: Hardwares/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Name,InventoryNumber,SerialNumber,TypeId,RoomId,Status,SoftwareIds")] HardwareViewModel model)
+        public async Task<IActionResult> Create(HardwareViewModel model)
         {
-            try
+            var all = await hardwareService.ReadAll(false, true);
+
+            if (all.Any(h => h.InventoryNumber == model.InventoryNumber))
+                ModelState.AddModelError(nameof(model.InventoryNumber), "Има устройство с този инвентарен номер.");
+
+            if (all.Any(h => h.SerialNumber == model.SerialNumber))
+                ModelState.AddModelError(nameof(model.SerialNumber), "Има устройство с този сериен номер.");
+
+            if (!ModelState.IsValid)
             {
-                if (ModelState.IsValid)
-                {
-                    await hardwareService.Create(model);
-                    return RedirectToPage("/Account/Manage/Hardware", new { area = "Identity" });
-                }
+                await LoadHardwareDropdownsAsync(model.SoftwareIds);
                 return View(model);
             }
-            catch (Exception ex)
-            {
-                return NotFound();
-            }
+
+            await hardwareService.Create(model);
+            return RedirectToPage("/Account/Manage/Hardware", new { area = "Identity" });
         }
+        //[Authorize(Roles = "Administrator")]
+        //// GET: Hardwares/Create
+        //public async  Task<IActionResult> Create()
+        //{
+        //    ViewBag.SoftwareList = new SelectList(await softwareService.ReadAll(false,true), "Id", "Name");
+        //    ViewBag.Types = new SelectList(await typeContext.ReadAll(false,true), "Id", "Name");
+        //    ViewBag.Rooms = new SelectList(await roomContext.ReadAll(false,true), "Id", "Name");
+        //    return View();
+        //}
+        //[Authorize(Roles = "Administrator")]
+        //// POST: Hardwares/Create
+        //// To protect from overposting attacks, enable the specific properties you want to bind to.
+        //// For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public async Task<IActionResult> Create([Bind("Name,InventoryNumber,SerialNumber,TypeId,RoomId,Status,SoftwareIds")] HardwareViewModel model)
+        //{
+        //    try
+        //    {
+        //        if (ModelState.IsValid)
+        //        {
+        //            await hardwareService.Create(model);
+        //            return RedirectToPage("/Account/Manage/Hardware", new { area = "Identity" });
+        //        }
+        //        return View(model);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return NotFound();
+        //    }
+        //}
         [Authorize(Roles = "Administrator")]
         // GET: Hardwares/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
+        //public async Task<IActionResult> Edit(int? id)
+        //{
+        //    if (id == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            var hardware = await hardwareService.Read(id.Value);
-            if (hardware == null)
-            {
-                return NotFound();
-            }
-            return View(hardware);
-        }
+        //    var hardware = await hardwareService.Read((int)id, useNavigationalProperties: true, isReadOnly: true);
+        //    if (hardware == null)
+        //    {
+        //        return NotFound();
+        //    }
+        //    return View(hardware);
+        //}
+        //[Authorize(Roles = "Administrator")]
+        //// POST: Hardwares/Edit/5
+        //// To protect from overposting attacks, enable the specific properties you want to bind to.
+        //// For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public async Task<IActionResult> Edit(int id, [Bind("Id,Name,InventoryNumber,SerialNumber,Category,Type,Room,Status,Softwares")] Hardware hardware)
+        //{
+        //    if (id != hardware.Id)
+        //    {
+        //        return NotFound();
+        //    }
+
+        //    if (ModelState.IsValid)
+        //    {
+        //        try
+        //        {
+        //            await hardwareService.Update(hardware);
+        //            return RedirectToPage("/Account/Manage/Hardware", new { area = "Identity" });
+        //        }
+        //        catch (DbUpdateConcurrencyException)
+        //        {
+        //            return NotFound();
+        //        }
+        //    }
+        //    return View(hardware);
+        //   // return RedirectToAction(nameof(Index)); ?
+        //}
         [Authorize(Roles = "Administrator")]
-        // POST: Hardwares/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        public async Task<IActionResult> Edit(int id)
+        {
+            var hardware = await hardwareService.Read(id, true, true);
+            if (hardware == null) return NotFound();
+
+            var vm = new HardwareViewModel
+            {
+                Id = hardware.Id,
+                Name = hardware.Name,
+                InventoryNumber = hardware.InventoryNumber,
+                SerialNumber = hardware.SerialNumber,
+                Status = hardware.Status,
+                TypeId = hardware.Type.Id,
+                RoomId = hardware.Room.Id,
+                SoftwareIds = hardware.Softwares.Select(s => s.Id).ToList()
+            };
+            await LoadHardwareDropdownsAsync(vm.SoftwareIds, vm.TypeId, vm.RoomId);
+            return View(vm);
+        }
+
+        [Authorize(Roles = "Administrator")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,InventoryNumber,SerialNumber,Category,Type,Room,Status,Softwares")] Hardware hardware)
+        public async Task<IActionResult> Edit(int id, HardwareViewModel model)
         {
-            if (id != hardware.Id)
+            if (id != model.Id) return NotFound();
+
+            var all = await hardwareService.ReadAll(false, true);
+
+            if (all.Any(h => h.Id != model.Id && h.InventoryNumber == model.InventoryNumber))
+                ModelState.AddModelError(nameof(model.InventoryNumber), "Има устройство с този инвентарен номер.");
+
+            if (all.Any(h => h.Id != model.Id && h.SerialNumber == model.SerialNumber))
+                ModelState.AddModelError(nameof(model.SerialNumber), "Има устройство с този сериен номер.");
+
+            if (!ModelState.IsValid)
             {
-                return NotFound();
+                await LoadHardwareDropdownsAsync(model.SoftwareIds, model.TypeId, model.RoomId);
+                return View(model);
             }
 
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    await hardwareService.Update(hardware);
-                    return RedirectToPage("/Account/Manage/Hardware", new { area = "Identity" });
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    return NotFound();
-                }
-            }
-            return View(hardware);
-           // return RedirectToAction(nameof(Index)); ?
+            await hardwareService.Update(model);
+            return RedirectToPage("/Account/Manage/Hardware", new { area = "Identity" });
         }
-
         [Authorize(Roles = "Administrator")]
         // GET: Hardwares/Delete/5
         public async Task<IActionResult> Delete(int? id)
@@ -126,7 +216,7 @@ namespace MVC.Controllers
                 return NotFound();
             }
 
-            var hardware = await hardwareService.Read(id.Value);
+            var hardware = await hardwareService.Read((int)id, useNavigationalProperties: true, isReadOnly: true);
             if (hardware == null)
             {
                 return NotFound();
@@ -150,6 +240,30 @@ namespace MVC.Controllers
             {
                 return NotFound();
             }
+        }
+
+        [Authorize(Roles = "Administrator")]
+        public async Task<IActionResult> AddMaintenance(int id)
+        {
+            var hw = await hardwareService.Read(id, true, true);
+            if (hw == null) return NotFound();
+
+            return View(new MaintenanceViewModel
+            {
+                ParentId = id,
+                ItemName = $"{hw.InventoryNumber} - {hw.Name}",
+                Date = DateTime.Now
+            });
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrator")]
+        public async Task<IActionResult> AddMaintenance(MaintenanceViewModel vm)
+        {
+            if (!ModelState.IsValid) return View(vm);
+
+            await hardwareService.AddMaintenance(vm.ParentId, vm.Description, vm.Date);
+            return RedirectToAction("Details", new { id = vm.ParentId });
         }
 
     }

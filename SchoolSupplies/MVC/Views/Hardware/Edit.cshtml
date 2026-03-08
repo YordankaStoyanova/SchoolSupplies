@@ -1,12 +1,13 @@
-﻿@using BusinessLayer
-@model Hardware
+﻿@using ApplicationLayer.ViewModels
+@using Microsoft.AspNetCore.Mvc.Rendering
+@model HardwareViewModel
+
 @{
     ViewData["Title"] = "Редактиране на хардуер";
-    var locations = ViewBag.Locations as SelectList;       // списък с локации
-    var statuses = ViewBag.Statuses as SelectList;         // списък със статуси
-    var softwareList = ViewBag.SoftwareList as SelectList; // списък с наличния софтуер
+    var softwareList = ViewBag.SoftwareList as SelectList;
     Layout = null;
 }
+
 <!DOCTYPE html>
 <html lang="bg">
 <head>
@@ -16,7 +17,6 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* Същият CSS като в Create */
         :root {
             --primary-beige: #F5F1E8;
             --secondary-cream: #E8DFCA;
@@ -70,21 +70,6 @@
             color: white;
         }
 
-        .breadcrumb-custom {
-            background-color: transparent;
-            padding: 0;
-            margin-bottom: 20px;
-        }
-
-            .breadcrumb-custom .breadcrumb-item a {
-                color: var(--accent-brown);
-                text-decoration: none;
-            }
-
-            .breadcrumb-custom .breadcrumb-item.active {
-                color: var(--dark-brown);
-            }
-
         .text-danger {
             font-size: 0.875em;
         }
@@ -97,83 +82,90 @@
         </div>
     </nav>
 
-<div class="form-container">
-    <h2>Редактиране на хардуер</h2>
-    <hr />
+    <div class="container-fluid mt-4">
+        <div class="form-container">
+            <h2>Редактиране на хардуер</h2>
+            <hr />
 
-    <form asp-action="Edit" method="post">
-        @Html.AntiForgeryToken()
-        <input type="hidden" asp-for="Id" />
+            <form asp-action="Edit" method="post">
+                @Html.AntiForgeryToken()
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="Id" />
 
-        <div class="row">
-            <!-- Лява колона -->
-            <div class="col-md-6">
-                <div class="mb-3">
-                    <label asp-for="InventoryNumber" class="form-label">Инвентарен номер </label>
-                    <input asp-for="InventoryNumber" class="form-control" required />
-                    <span asp-validation-for="InventoryNumber" class="text-danger"></span>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label asp-for="InventoryNumber" class="form-label">Инвентарен номер *</label>
+                            <input asp-for="InventoryNumber" class="form-control" />
+                            <span asp-validation-for="InventoryNumber" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="SerialNumber" class="form-label">Сериен номер *</label>
+                            <input asp-for="SerialNumber" class="form-control" />
+                            <span asp-validation-for="SerialNumber" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Name" class="form-label">Име *</label>
+                            <input asp-for="Name" class="form-control" />
+                            <span asp-validation-for="Name" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="TypeId" class="form-label">Вид *</label>
+                            <select asp-for="TypeId" class="form-select" asp-items="ViewBag.Types as SelectList">
+                                <option value="">Изберете вид</option>
+                            </select>
+                            <span asp-validation-for="TypeId" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label asp-for="RoomId" class="form-label">Локация *</label>
+                            <select asp-for="RoomId" class="form-select" asp-items="ViewBag.Rooms as SelectList">
+                                <option value="">Изберете локация</option>
+                            </select>
+                            <span asp-validation-for="RoomId" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Status" class="form-label">Статус *</label>
+                            <select asp-for="Status" class="form-select">
+                                <option value="">Изберете статус</option>
+                                <option value="Working">Работещ</option>
+                                <option value="Repair">За ремонт</option>
+                                <option value="Disposed">Бракуван</option>
+                            </select>
+                            <span asp-validation-for="Status" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Инсталиран софтуер</label>
+                            <select asp-for="SoftwareIds" class="form-select" multiple asp-items="softwareList"></select>
+                            <small class="text-muted">Ctrl за повече от един</small>
+                        </div>
+
+                       
+                    </div>
                 </div>
 
-                <div class="mb-3">
-                    <label asp-for="SerialNumber" class="form-label">Сериен номер </label>
-                    <input asp-for="SerialNumber" class="form-control" required />
-                    <span asp-validation-for="SerialNumber" class="text-danger"></span>
+                <div class="d-flex justify-content-between mt-4">
+                    <a class="btn btn-secondary" asp-area="Identity" asp-page="/Account/Manage/Hardware">
+                        <i class="fas fa-arrow-left me-2"></i> Назад
+                    </a>
+                    <button type="submit" class="btn btn-custom">
+                        <i class="fas fa-save me-2"></i> Запази
+                    </button>
                 </div>
-
-                <div class="mb-3">
-                    <label asp-for="Name" class="form-label">Име</label>
-                    <input asp-for="Name" class="form-control" required />
-                    <span asp-validation-for="Name" class="text-danger"></span>
-                </div>
-
-            </div>
-
-            <!-- Дясна колона -->
-            <div class="col-md-6">
-                <div class="mb-3">
-                    <label asp-for="Room.Name" class="form-label">Локация </label>
-                    <select asp-for="Room.Name" class="form-select" asp-items="locations" required>
-                        <option value="">Изберете локация</option>
-                    </select>
-                    <span asp-validation-for="Room.Name" class="text-danger"></span>
-                </div>
-
-                <div class="mb-3">
-                    <label asp-for="Status" class="form-label">Статус </label>
-                    <select asp-for="Status" class="form-select" asp-items="statuses" required>
-                        <option value="">Изберете статус</option>
-                    </select>
-                    <span asp-validation-for="Status" class="text-danger"></span>
-                </div>
-
-                <div class="mb-3">
-                    <label asp-for="MaintenanceLogs" class="form-label">История на поддръжката</label>
-                    <textarea asp-for="MaintenanceLogs" class="form-control" rows="3" placeholder="Дата и описание на последна поддръжка..."></textarea>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">Инсталиран софтуер</label>
-                    <select name="InstalledSoftwareIds" class="form-select" multiple asp-items="softwareList">
-                    </select>
-                </div>
-            </div>
+            </form>
         </div>
+    </div>
 
-        <div class="d-flex justify-content-between mt-4">
-
-            <a class="btn btn-custom" asp-area="Identity" asp-page="/Account/Manage/Hardware">
-                <i class="fas fa-arrow-left me-2"></i> Назад
-            </a>
-            <button type="submit" class="btn btn-custom">
-                <i class="fas fa-save me-2"></i>Запази
-            </button>
-        </div>
-    </form>
-</div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
 </body>
 </html>
-@section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
-}

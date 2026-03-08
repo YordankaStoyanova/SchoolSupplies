@@ -32,7 +32,11 @@ namespace DataLayer
             IQueryable<License> query = dbContext.Licenses;
 
             if (useNavigationalProperties)
-                query = query.Include(l => l.Software);
+                query = query
+                    .Include(l => l.Softwares)
+                        .ThenInclude(s => s.Type)
+                    .Include(l => l.Softwares)
+                        .ThenInclude(s => s.Hardwares);
 
             if (isReadOnly)
                 query = query.AsNoTrackingWithIdentityResolution();
@@ -42,14 +46,18 @@ namespace DataLayer
 
         public async Task<List<License>> ReadAll(bool useNavigationalProperties = false, bool isReadOnly = false)
         {
+
             IQueryable<License> query = dbContext.Licenses;
 
             if (useNavigationalProperties)
-                query = query.Include(l => l.Software);
+                query = query
+                    .Include(l => l.Softwares)
+                        .ThenInclude(s => s.Type)
+                    .Include(l => l.Softwares)
+                        .ThenInclude(s => s.Hardwares);
+
             if (isReadOnly)
-            {
                 query = query.AsNoTrackingWithIdentityResolution();
-            }
 
             return await query.ToListAsync();
         }
@@ -60,15 +68,20 @@ namespace DataLayer
             dbContext.Entry<License>(licenseFromDb).CurrentValues.SetValues(item);
             if (useNavigationalProperties)
             {
-                Software softwareFromDb = await dbContext.Softwares.FindAsync(item.Software.Id);
-                if (softwareFromDb != null) 
+                List<Software> softwares = new List<Software>();
+                for (int i = 0; i < item.Softwares.Count; i++)
                 {
-                    licenseFromDb.Software = softwareFromDb;
+                    Software softwareFromDb = dbContext.Softwares.Find(item.Softwares[i].Id);
+                    if (softwareFromDb != null)
+                    {
+                        softwares.Add(softwareFromDb);
+                    }
+                    else
+                    {
+                        softwares.Add(item.Softwares[i]);
+                    }
                 }
-                else
-                {
-                    licenseFromDb.Software = item.Software;
-                }
+                licenseFromDb.Softwares= softwares;
              
             }
            

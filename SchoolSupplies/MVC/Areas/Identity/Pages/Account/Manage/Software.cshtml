@@ -10,8 +10,30 @@
         <!-- Лицензи -->
         <div class="col-md-4">
             <h3 class="category-title">Налични лицензи</h3>
+
             <div id="licenseCardsContainer">
-                <!-- Лицензните карти ще се попълват от JavaScript -->
+
+                @foreach (var stat in Model.LicenseStats)
+                {
+                    <div class="license-card">
+
+                        <h5>
+                            <i class="fas fa-cog me-2"></i>@stat.Title
+                        </h5>
+
+                        <div class="license-count">
+                            @stat.TotalLicenses
+                        </div>
+
+                        <p class="text-center">лиценза</p>
+
+                        <p class="text-muted small mt-2">
+                            @stat.UsedLicenses използвани
+                        </p>
+
+                    </div>
+                }
+
             </div>
         </div>
 
@@ -45,9 +67,10 @@
                             <a class="btn btn-custom" asp-action="Create" asp-controller="Software">
                                 <i class="fas fa-plus me-2"></i>Добави софтуер
                             </a>
-                            <a class="btn btn-license" asp-action="Create" asp-controller="License">
-                                <i class="fas fa-key me-2"></i>Добави лиценз
-                            </a>
+                                <a class="btn btn-license" asp-controller="Software" asp-action="License">
+                                    <i class="fas fa-key me-2"></i> Добави лиценз
+                                </a>
+                         
                             }
                         </div>
                     </div>
@@ -94,7 +117,8 @@
                                 <td>@item.Type?.Name</td>
                                 <td>@item.License?.Name</td>
                                 <td>@item.License?.ExpirationDate </td>
-                                <td>@string.Join(", ", item.Hardwares.Take(2).Select(h => h.Name).ToList()) @(item.Hardwares?.Count > 2 ? "и още" : "")</td>
+                                    <td>
+                                    @string.Join(", ", item.Hardwares.Take(2).Select(h => h.Name).ToList()) @(item.Hardwares?.Count > 2 ? "и още" : "" )</td>
                                 <td>
                                     <span class="badge @statusBadge ">@statusName</span>
                                 </td>

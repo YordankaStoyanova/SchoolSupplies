@@ -59,8 +59,7 @@ namespace DataLayer.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     MaxUsage = table.Column<int>(type: "int", nullable: false),
-                    ExpirationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Status = table.Column<int>(type: "int", nullable: false)
+                    ExpirationDate = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -248,7 +247,7 @@ namespace DataLayer.Migrations
                         column: x => x.LicenseId,
                         principalTable: "Licenses",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Softwares_Rooms_RoomId",
                         column: x => x.RoomId,
@@ -259,7 +258,7 @@ namespace DataLayer.Migrations
                         column: x => x.TypeId,
                         principalTable: "Types",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -292,8 +291,8 @@ namespace DataLayer.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    SoftwareId = table.Column<int>(type: "int", nullable: true),
                     HardwareId = table.Column<int>(type: "int", nullable: true),
+                    SoftwareId = table.Column<int>(type: "int", nullable: true),
                     Description = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
                     Date = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
@@ -304,12 +303,14 @@ namespace DataLayer.Migrations
                         name: "FK_MaintenanceLogs_Hardwares_HardwareId",
                         column: x => x.HardwareId,
                         principalTable: "Hardwares",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_MaintenanceLogs_Softwares_SoftwareId",
                         column: x => x.SoftwareId,
                         principalTable: "Softwares",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
@@ -379,8 +380,7 @@ namespace DataLayer.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Softwares_LicenseId",
                 table: "Softwares",
-                column: "LicenseId",
-                unique: true);
+                column: "LicenseId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Softwares_RoomId",

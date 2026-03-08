@@ -29,8 +29,8 @@ namespace BusinessLayer
         [Required(ErrorMessage = "Серийният номер е задължителен!")]
         [StringLength(100, MinimumLength = 5,
      ErrorMessage = "Серийният номер трябва да е между 5 и 100 символа!")]
-        [RegularExpression(@"^[A-Za-z0-9]+$",
-     ErrorMessage = "Серийният номер трябва да съдържа само букви и числа!")]
+        [RegularExpression(@"^[A-Za-z0-9\-\/]+$",
+    ErrorMessage = "Серийният номер може да съдържа букви,числа, - и / ")]
         public string SerialNumber { get; set; }
 
         public Type Type { get; set; }

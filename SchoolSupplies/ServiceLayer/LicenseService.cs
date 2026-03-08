@@ -1,5 +1,6 @@
-﻿using DataLayer;
+﻿using ApplicationLayer.ViewModels;
 using BusinessLayer;
+using DataLayer;
 
 namespace ServiceLayer
 {
@@ -36,6 +37,32 @@ namespace ServiceLayer
         public async Task Delete(int key)
         {
             await _context.Delete(key);
+        }
+        public async Task<List<LicenseStatsViewModel>> GetLicenseStatsByType()
+        {
+            var licenses = await _context.ReadAll(true, true);
+
+            var stats = licenses
+                .Where(l => l.Softwares != null)
+                .SelectMany(l => l.Softwares
+                    .Where(s => s != null && s.Type != null && !string.IsNullOrWhiteSpace(s.Type.Name))
+                    .Select(s => new
+                    {
+                        Type = s.Type.Name,
+                        MaxUsage = l.MaxUsage,
+                        Used = s.Hardwares?.Count ?? 0
+                    }))
+                .GroupBy(x => x.Type)
+                .Select(g => new LicenseStatsViewModel
+                {
+                    Title = g.Key,
+                    TotalLicenses = g.Sum(x => x.MaxUsage),
+                    UsedLicenses = g.Sum(x => x.Used)
+                })
+                .OrderBy(x => x.Title)
+                .ToList();
+
+            return stats;
         }
     }
 }

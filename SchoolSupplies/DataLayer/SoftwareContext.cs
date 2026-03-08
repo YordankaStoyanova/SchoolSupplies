@@ -25,6 +25,16 @@ namespace DataLayer
             if (typeFromDb != null) item.Type = typeFromDb;
             License licenseFromDb = await dbContext.Licenses.FindAsync(item.License.Id);
             if (licenseFromDb != null) item.License = licenseFromDb;
+            if (item.Hardwares != null && item.Hardwares.Count > 0)
+            {
+                var hardwares = new List<Hardware>();
+                foreach (var hw in item.Hardwares)
+                {
+                    var hwFromDb = await dbContext.Hardwares.FindAsync(hw.Id);
+                    if (hwFromDb != null) hardwares.Add(hwFromDb);
+                }
+                item.Hardwares = hardwares;
+            }
             dbContext.Softwares.Add(item);
             await dbContext.SaveChangesAsync();
         }
@@ -39,7 +49,8 @@ namespace DataLayer
                 query = query
                     .Include(s => s.MaintenanceLogs)
                     .Include(s => s.License)
-                    .Include(s => s.Type);
+                    .Include(s => s.Type)
+                    .Include(s => s.Hardwares);
 
             if (isReadOnly)
                 query = query.AsNoTrackingWithIdentityResolution();
@@ -55,7 +66,8 @@ namespace DataLayer
                 query = query
                     .Include(s => s.MaintenanceLogs)
                     .Include(s => s.License)
-                    .Include(s => s.Type);
+                    .Include(s => s.Type)
+                    .Include(s => s.Hardwares);
 
             if (isReadOnly)
                 query = query.AsNoTrackingWithIdentityResolution();
@@ -104,6 +116,14 @@ namespace DataLayer
                     }
                 }
                 softwareFromDb.MaintenanceLogs = logs;
+                List<Hardware> hardwares = new List<Hardware>();
+                for (int i = 0; i < item.Hardwares.Count; i++)
+                {
+                    Hardware hwFromDb = await dbContext.Hardwares.FindAsync(item.Hardwares[i].Id);
+                    if (hwFromDb != null) hardwares.Add(hwFromDb);
+                    else hardwares.Add(item.Hardwares[i]);
+                }
+                softwareFromDb.Hardwares = hardwares;
             }
             await dbContext.SaveChangesAsync();
         }

@@ -267,8 +267,6 @@ body {
 
 
 
-
-
 /* Всички стилове от оригиналния HTML, запазени напълно */
 :root {
     --primary-beige: #F5F1E8;
@@ -591,3 +589,63 @@ body {
     border-radius: 8px;
 }
 
+html, body {
+    max-width: 100% !important;
+    overflow-x: hidden !important;
+}
+
+
+.table-responsive {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+}
+
+
+@media (max-width: 900px) {
+    .navbar .container-fluid {
+        flex-wrap: wrap !important;
+    }
+
+    .navbar-brand {
+        width: 100% !important;
+        max-width: 100% !important;
+        white-space: normal !important;
+        word-break: break-word !important;
+        overflow-wrap: break-word !important;
+        text-align: center !important;
+        margin-bottom: 8px !important;
+        font-size: 1.2rem !important; 
+    }
+
+    .navbar .d-flex.align-items-center {
+        width: 100% !important;
+        justify-content: center !important;
+        flex-wrap: wrap !important;
+        gap: 10px !important;
+    }
+}
+
+@media (max-width: 600px) {
+    .navbar-brand {
+        font-size: 1rem !important;
+    }
+
+    .navbar .d-flex.align-items-center {
+        font-size: 0.9rem !important;
+    }
+}
+
+@media (max-width: 400px) {
+    .navbar-brand {
+        font-size: 0.9rem !important;
+    }
+
+    .navbar .d-flex.align-items-center .me-3 {
+        text-align: center !important;
+        margin-right: 0 !important;
+    }
+
+    .navbar .btn-sm {
+        padding: 0.2rem 0.5rem !important;
+    }
+}

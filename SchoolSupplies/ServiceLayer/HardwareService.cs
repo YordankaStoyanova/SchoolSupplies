@@ -43,12 +43,36 @@ namespace ServiceLayer
 
         public async Task<List<Hardware>> ReadAll(bool useNavigationalProperties = false,bool isReadOnly = false )
         {
-            return await _hardwareContext.ReadAll(useNavigationalProperties);
+            return await _hardwareContext.ReadAll(useNavigationalProperties,isReadOnly);
         }
 
-        public async Task Update(Hardware item, bool useNavigationalProperties = false)
+        //public async Task Update(Hardware item, bool useNavigationalProperties = false)
+        //{
+        //    await _hardwareContext.Update(item, useNavigationalProperties);
+        //}
+        public async Task Update(HardwareViewModel item)
         {
-            await _hardwareContext.Update(item, useNavigationalProperties);
+            var hardwareFromDb = await _hardwareContext.Read(item.Id, useNavigationalProperties: true, isReadOnly: false);
+            if (hardwareFromDb == null) throw new ArgumentException("Hardware not found");
+
+            hardwareFromDb.Name = item.Name;
+            hardwareFromDb.InventoryNumber = item.InventoryNumber;
+            hardwareFromDb.SerialNumber = item.SerialNumber;
+            hardwareFromDb.Status = item.Status;
+
+            hardwareFromDb.Type = await _typeContext.Read(item.TypeId);
+            hardwareFromDb.Room = await _roomContext.Read(item.RoomId);
+
+            var softwares = new List<Software>();
+            foreach (var swId in item.SoftwareIds.Distinct())
+            {
+                var sw = await _softwareContext.Read(swId);
+                if (sw != null) softwares.Add(sw);
+            }
+            hardwareFromDb.Softwares = softwares;
+
+            // НЕ пипаме MaintenanceLogs
+            await _hardwareContext.Update(hardwareFromDb, useNavigationalProperties: true);
         }
 
         public async Task Delete(int key)
@@ -112,7 +136,20 @@ namespace ServiceLayer
             List<Hardware> hardwares = await ReadAll(true, true);
             return hardwares.Count(h => h.Status == ItemStatus.Disposed);
         }
-        
+        public async Task AddMaintenance(int hardwareId, string description, DateTime date)
+        {
+            var hardware = await _hardwareContext.Read(hardwareId, useNavigationalProperties: true, isReadOnly: false);
+            if (hardware == null) throw new ArgumentException("Hardware not found");
+
+            hardware.MaintenanceLogs.Add(new MaintenanceLog(description, date)
+            {
+                Hardware = hardware,
+                Software = null
+            });
+
+            await _hardwareContext.Update(hardware, useNavigationalProperties: true);
+        }
+
     }
 
 }

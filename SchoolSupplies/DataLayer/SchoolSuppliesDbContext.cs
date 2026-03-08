@@ -33,10 +33,36 @@ namespace DataLayer
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Software>(s=>
+            modelBuilder.Entity<Software>(s =>
             {
-                s.HasOne(s => s.License).WithOne(l => l.Software).HasForeignKey<Software>(so=>so.LicenseId);
-                s.HasMany(s=>s.Hardwares).WithMany(h=>h.Softwares);
+                // 1 License -> many Softwares
+                s.HasOne(x => x.License)
+                 .WithMany(l => l.Softwares)
+                 .HasForeignKey(x => x.LicenseId)
+                 .OnDelete(DeleteBehavior.Restrict);
+
+                // many-to-many Software <-> Hardware
+                s.HasMany(x => x.Hardwares)
+                 .WithMany(h => h.Softwares);
+
+                // ако имаш TypeId:
+                s.HasOne(x => x.Type)
+                 .WithMany()
+                 .HasForeignKey(x => x.TypeId)
+                 .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            modelBuilder.Entity<MaintenanceLog>(m =>
+            {
+                m.HasOne(x => x.Hardware)
+                    .WithMany(h => h.MaintenanceLogs)
+                    .HasForeignKey(x => x.HardwareId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                m.HasOne(x => x.Software)
+                    .WithMany(s => s.MaintenanceLogs)
+                    .HasForeignKey(x => x.SoftwareId)
+                    .OnDelete(DeleteBehavior.Cascade);
             });
             base.OnModelCreating(modelBuilder); 
         }

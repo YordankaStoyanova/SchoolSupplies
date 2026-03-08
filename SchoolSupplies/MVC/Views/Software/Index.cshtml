@@ -62,6 +62,7 @@
                     </div>
                 </div>
 
+      
                 <div class="table-container section-fixed-height">
                     <div class="table-responsive">
                         <table class="table table-custom table-hover">
@@ -69,7 +70,7 @@
                                 <tr>
                                     <th>Име</th>
                                     <th>Вид</th>
-                                    <th>Лиценз</th>
+                                    <th>Статус на лиценза</th>
                                     <th>На устройства</th>
                                 </tr>
                             </thead>
@@ -92,9 +93,20 @@
                                     }
                                     <tr>
                                         <td>@item.Name</td>
-                                        <td>@item.Type.Name</td>
+                                       <td>@item.Type.Name</td> 
                                         <td> <span class="badge @statusBadge ">@statusName</span></td>
-                                        <td>@string.Join(", ", item.Hardwares.Take(2).Select(h => h.Name).ToList()) @(item.Hardwares?.Count > 2 ? "и още" : "")</td>
+                                        <td>
+                                            @if (item.Hardwares != null && item.Hardwares.Any())
+                                            {
+                                                @string.Join(", ", item.Hardwares.Take(2).Select(h => h.Name))
+                                                @(item.Hardwares.Count > 2 ? " и още..." : "")
+                                            }
+                                            else
+                                            {
+                                                <span>Няма устройства</span>
+                                            } 
+                                            @* @string.Join(", ", item.Hardwares.Take(2).Select(h => h.Name).ToList()) @(item.Hardwares?.Count > 2 ? "и още" : "") *@
+                                            </td>
                                     </tr>
                                 }
                             </tbody>

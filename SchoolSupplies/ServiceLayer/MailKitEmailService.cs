@@ -22,10 +22,8 @@ namespace ServiceLayer
 
         public Task SendEmailAsync(string email, string subject, string htmlMessage)
         {
-            return Task.CompletedTask;
-
-            // After you enter the required options in appsettings.json:
-            //return Execute(email, subject, htmlMessage);
+     
+            return Execute(email, subject, htmlMessage);
         }
 
         public async Task<bool> Execute(string to, string subject, string message)

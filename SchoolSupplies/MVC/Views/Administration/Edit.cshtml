@@ -1,8 +1,7 @@
-﻿@using BusinessLayer
-@model License
-
+﻿@using ApplicationLayer.ViewModels
+@model UserViewModel
 @{
-    ViewData["Title"] = "Добавяне на лиценз";
+    ViewData["Title"] = "Редактиране на потребител";
     Layout = null;
 }
 
@@ -22,18 +21,15 @@
             --secondary-cream: #E8DFCA;
             --accent-brown: #A68B7B;
             --dark-brown: #7D6E5D;
-            --light-beige: #FAF7F0;
         }
 
         body {
             background-color: var(--primary-beige);
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            color: #333;
         }
 
         .navbar {
             background-color: var(--dark-brown);
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
 
         .navbar-brand {
@@ -50,6 +46,11 @@
             margin-top: 20px;
         }
 
+        .details-title {
+            color: var(--dark-brown);
+            font-weight: 600;
+        }
+
         .btn-custom {
             background-color: var(--accent-brown);
             color: white;
@@ -57,32 +58,20 @@
             padding: 10px 20px;
             border-radius: 6px;
             font-weight: 500;
-            transition: all 0.3s;
         }
 
-        .btn-custom:hover {
-            background-color: var(--dark-brown);
+        .btn-secondary {
+            background-color: #6c757d;
             color: white;
-            transform: translateY(-2px);
-        }
-
-        .btn-license {
-            background-color: #90EE90;
-            color: #333;
             border: none;
             padding: 10px 20px;
             border-radius: 6px;
             font-weight: 500;
-            transition: all 0.3s;
         }
 
-        .btn-license:hover {
-            background-color: #7CCD7C;
-            color: #333;
-            transform: translateY(-2px);
+        .text-danger {
+            font-size: 0.875em;
         }
-
-        .text-danger { font-size: 0.875em; }
     </style>
 </head>
 <body>
@@ -94,48 +83,44 @@
 
     <div class="container-fluid mt-4">
         <div class="form-container">
-            <h2>Добавяне на нов лиценз</h2>
+            <h2 class="details-title">Редактиране на потребител</h2>
             <hr />
 
-            <form asp-action="License" method="post">
+            <form asp-action="Edit" method="post">
                 @Html.AntiForgeryToken()
-
+                <input type="hidden" asp-for="Id" />
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
                 <div class="row">
-                 
                     <div class="col-md-6">
                         <div class="mb-3">
-                            <label asp-for="Name" class="form-label">Име </label>
+                            <label asp-for="Name" class="form-label">Име *</label>
                             <input asp-for="Name" class="form-control" />
                             <span asp-validation-for="Name" class="text-danger"></span>
                         </div>
 
                         <div class="mb-3">
-                            <label asp-for="MaxUsage" class="form-label">Максимална употреба </label>
-                            <input asp-for="MaxUsage" type="number" min="1" class="form-control" />
-                            <span asp-validation-for="MaxUsage" class="text-danger"></span>
+                            <label asp-for="Email" class="form-label">Имейл *</label>
+                            <input asp-for="Email" type="email" class="form-control" />
+                            <span asp-validation-for="Email" class="text-danger"></span>
                         </div>
                     </div>
 
-               
                     <div class="col-md-6">
                         <div class="mb-3">
-                            <label asp-for="ExpirationDate" class="form-label">Валидност до </label>
-                            <input asp-for="ExpirationDate" type="date" class="form-control" />
-                            <span asp-validation-for="ExpirationDate" class="text-danger"></span>
+                            <label asp-for="PhoneNumber" class="form-label">Телефонен номер</label>
+                            <input asp-for="PhoneNumber" class="form-control" />
+                            <span asp-validation-for="PhoneNumber" class="text-danger"></span>
                         </div>
-
                     </div>
                 </div>
 
                 <div class="d-flex justify-content-between mt-4">
-                    <a class="btn btn-custom" asp-area="Identity" asp-page="/Account/Manage/Software">
-                        <i class="fas fa-arrow-left me-2"></i> Назад
+                    <a class="btn btn-secondary" asp-area="Identity" asp-page="/Account/Manage/Administration">
+                        <i class="fas fa-arrow-left me-2"></i>Назад
                     </a>
-
                     <button type="submit" class="btn btn-custom">
-                        <i class="fas fa-save me-2"></i> Запази
+                        <i class="fas fa-save me-2"></i>Запази
                     </button>
                 </div>
             </form>

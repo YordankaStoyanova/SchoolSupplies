@@ -1,23 +1,22 @@
 ﻿@using ApplicationLayer.ViewModels
-@using BusinessLayer
+@using Microsoft.AspNetCore.Mvc.Rendering
 @model SoftwareViewModel
+
 @{
     ViewData["Title"] = "Добавяне на софтуер";
-    var computersList = ViewBag.ComputersList as SelectList;
+    var computersList = ViewBag.Hardwares as SelectList;
     Layout = null;
 }
+
 <!DOCTYPE html>
 <html lang="bg">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewData["Title"] - Управление на училищен инвентар</title>
-    <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* Копирайте тук всички CSS стилове от оригиналния шаблон */
         :root {
             --primary-beige: #F5F1E8;
             --secondary-cream: #E8DFCA;
@@ -25,13 +24,21 @@
             --dark-brown: #7D6E5D;
             --light-beige: #FAF7F0;
         }
+
         body {
             background-color: var(--primary-beige);
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             color: #333;
         }
-        .navbar { background-color: var(--dark-brown); }
-        .navbar-brand { color: white !important; }
+
+        .navbar {
+            background-color: var(--dark-brown);
+        }
+
+        .navbar-brand {
+            color: white !important;
+        }
+
         .form-container {
             background-color: white;
             border-radius: 10px;
@@ -39,6 +46,7 @@
             padding: 30px;
             margin-top: 20px;
         }
+
         .btn-custom {
             background-color: var(--accent-brown);
             color: white;
@@ -48,69 +56,86 @@
             font-weight: 500;
             transition: all 0.3s;
         }
-        .btn-custom:hover {
-            background-color: var(--dark-brown);
-            transform: translateY(-2px);
-        }
-        /* ... добавете всички останали класове от оригиналния CSS ... */
+
+            .btn-custom:hover {
+                background-color: var(--dark-brown);
+                transform: translateY(-2px);
+            }
     </style>
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container-fluid">
-            <a class="navbar-brand" href="/">
-                <i class="fas fa-school me-2"></i>Управление на училищен инвентар
-            </a>
+            <a class="navbar-brand" href="/"><i class="fas fa-school me-2"></i>Управление на училищен инвентар</a>
         </div>
     </nav>
 
-<div class="form-container">
-    <h2>Добавяне на нов софтуер</h2>
-    <hr />
+    <div class="container-fluid mt-4">
+        <div class="form-container">
+            <h2>Добавяне на нов софтуер</h2>
+            <hr />
 
-    <form asp-action="Create" method="post">
-        @Html.AntiForgeryToken()
-        <div class="row">
-            <div class="col-md-6">
-                <div class="mb-3">
-                    <label asp-for="Name" class="form-label">Име на софтуер *</label>
-                    <input asp-for="Name" class="form-control" required />
+            <form asp-action="Create" method="post">
+                @Html.AntiForgeryToken()
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label asp-for="Name" class="form-label">Име на софтуер *</label>
+                            <input asp-for="Name" class="form-control" />
+                            <span asp-validation-for="Name" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="SerialNumber" class="form-label">Сериен номер *</label>
+                            <input asp-for="SerialNumber" class="form-control" />
+                            <span asp-validation-for="SerialNumber" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="TypeId" class="form-label">Вид *</label>
+                            <select asp-for="TypeId" class="form-select" asp-items="ViewBag.Types as SelectList">
+                                <option value="">Изберете вид</option>
+                            </select>
+                            <span asp-validation-for="TypeId" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label asp-for="LicenseId" class="form-label">Лиценз *</label>
+                            <select asp-for="LicenseId" class="form-select" asp-items="ViewBag.Licenses as SelectList">
+                                <option value="">Изберете лиценз</option>
+                            </select>
+                            <span asp-validation-for="LicenseId" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">На компютри</label>
+                            <select asp-for="HardwareIds" class="form-select" multiple asp-items="computersList"></select>
+                            <small class="text-muted">Ctrl за повече от един</small>
+                        </div>
+
+                        
+                    </div>
                 </div>
-                <div class="mb-3">
-                    <label asp-for="SerialNumber" class="form-label">Сериен номер *</label>
-                    <input asp-for="SerialNumber" class="form-control" required />
+
+                <div class="d-flex justify-content-between mt-4">
+                    <a class="btn btn-custom" asp-area="Identity" asp-page="/Account/Manage/Software">
+                        <i class="fas fa-arrow-left me-2"></i> Назад
+                    </a>
+                    <button type="submit" class="btn btn-custom">
+                        <i class="fas fa-save me-2"></i> Запази
+                    </button>
                 </div>
-                <div class="mb-3">
-                    <label asp-for="TypeId" class="form-label">Вид *</label>
-                    <select asp-for="TypeId" class="form-select" asp-items="ViewBag.SoftwareTypes" required>
-                        <option value="">Изберете вид</option>
-                    </select>
-                </div>
-                <div class="mb-3">
-                    <label asp-for="MaintenanceLogs" class="form-label">История на поддръжката</label>
-                    <textarea asp-for="MaintenanceLogs" class="form-control" rows="3" placeholder="Дата и описание на последна поддръжка..."></textarea>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="mb-3">
-                    <label asp-for="LicenseId" class="form-label">Лиценз *</label>
-                    <select asp-for="LicenseId" class="form-select" asp-items="ViewBag.SoftwareLicense" required>
-                        <option value="">Изберете лиценз</option>
-                    </select>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">На компютри</label>
-                    <select name="HardwareIds" class="form-select" multiple asp-items="computersList"></select>
-                </div>
-            </div>
+            </form>
         </div>
-        <div class="d-flex justify-content-between mt-4">
-            <a class="btn btn-custom" asp-area="Identity" asp-page="/Account/Manage/Software">
-                <i class="fas fa-arrow-left me-2"></i> Назад
-            </a>
-            <button type="submit" class="btn btn-custom">Запази</button>
-        </div>
-    </form>
-</div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
 </body>
 </html>

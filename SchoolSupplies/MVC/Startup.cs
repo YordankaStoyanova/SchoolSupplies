@@ -3,6 +3,7 @@ using DataLayer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
+using MVC.Controllers;
 using ServiceLayer;
 
 namespace MVC;
@@ -34,6 +35,7 @@ public class Startup
         services.AddScoped<HardwareService, HardwareService>();
         services.AddScoped<SoftwareService, SoftwareService>();
         services.AddScoped<LicenseService, LicenseService>();
+        services.AddScoped<AdministrationService,AdministrationService>();
         services.AddScoped<MaintenanceLogService, MaintenanceLogService>();
         services.AddScoped<IEmailSender, MailKitEmailService>();
         services.AddHttpContextAccessor();

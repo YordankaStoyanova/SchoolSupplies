@@ -12,8 +12,11 @@ namespace BusinessLayer
     {
         [Key]
         public int Id { get; set; }
-        public Software Software{ get; set; }
-        public Hardware Hardware{ get; set; }
+        public int? HardwareId { get; set; }
+        public Hardware? Hardware { get; set; }
+
+        public int? SoftwareId { get; set; }
+        public Software? Software { get; set; }
         [Required(ErrorMessage = "Описанието е задължително!")]
         [MaxLength(500, ErrorMessage = "Описанието не може да бъде над 500 символа!")]
         public string Description { get; set; }
@@ -23,7 +26,7 @@ namespace BusinessLayer
         public MaintenanceLog(string description,DateTime date)
         {
             Description = description;
-            Date = DateTime.UtcNow;
+            Date = DateTime.Now;
          
         }
         public override string ToString()
