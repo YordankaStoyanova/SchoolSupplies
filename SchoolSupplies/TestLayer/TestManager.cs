@@ -13,21 +13,13 @@ namespace TestLayer
     [TestFixture]
     public class TestManager
     {
-        internal static SchoolSuppliesDbContext DbContext;
-
-        static TestManager()
+        public static SchoolSuppliesDbContext GetDbContext(string dbName)
         {
             var options = new DbContextOptionsBuilder<SchoolSuppliesDbContext>()
-                .UseInMemoryDatabase("TestDb")
+                .UseInMemoryDatabase(databaseName: dbName)
                 .Options;
 
-            DbContext = new SchoolSuppliesDbContext(options);
-        }
-
-        [OneTimeTearDown]
-        public void Dispose()
-        {
-            DbContext.Dispose();
+            return new SchoolSuppliesDbContext(options);
         }
     }
 

@@ -271,7 +271,16 @@
                 opacity: 0.5;
                 cursor: not-allowed;
             }
-   
+       @@media (max-width: 915px) {
+            .search-filter-container .row > div:last-child
+
+        {
+            flex: 0 0 100% !important;
+            max-width: 100% !important;
+            margin-top: 10px !important;
+        }
+
+        }
     </style>
     <script src="~/js/site.js" asp-append-version="true"></script>
 }

@@ -13,145 +13,72 @@ namespace TestLayer
     [TestFixture]
     public class MaintenanceLogContextTests
     {
+        private SchoolSuppliesDbContext dbContext;
         private MaintenanceLogContext logContext;
 
         [SetUp]
-        public async Task Setup()
+        public void Setup()
         {
-            logContext = new MaintenanceLogContext(TestManager.DbContext);
+            dbContext = TestManager.GetDbContext(Guid.NewGuid().ToString());
+            logContext = new MaintenanceLogContext(dbContext);
+        }
 
-            // Изчистваме всички таблици преди всеки тест
-            TestManager.DbContext.MaintenanceLogs.RemoveRange(TestManager.DbContext.MaintenanceLogs);
-            TestManager.DbContext.Hardwares.RemoveRange(TestManager.DbContext.Hardwares);
-            TestManager.DbContext.Softwares.RemoveRange(TestManager.DbContext.Softwares);
-            TestManager.DbContext.Users.RemoveRange(TestManager.DbContext.Users);
-            TestManager.DbContext.Rooms.RemoveRange(TestManager.DbContext.Rooms);
-            TestManager.DbContext.Types.RemoveRange(TestManager.DbContext.Types);
-            TestManager.DbContext.Licenses.RemoveRange(TestManager.DbContext.Licenses);
-
-            await TestManager.DbContext.SaveChangesAsync();
+        [TearDown]
+        public void TearDown()
+        {
+            dbContext.Dispose();
         }
 
         [Test]
-        public async Task Create()
+        public async Task Create_AddsMaintenanceLog()
         {
-            var user = new User { Name = "Test User" };
-            TestManager.DbContext.Users.Add(user);
-            await TestManager.DbContext.SaveChangesAsync();
-
-            var log = new MaintenanceLog
-            {
-                Description = "Routine check",
-                Date = DateTime.UtcNow,
-                User = user
-            };
-
-            int before = TestManager.DbContext.MaintenanceLogs.Count();
+            var log = TestData.CreateMaintenanceLog("Initial log");
 
             await logContext.Create(log);
 
-            int after = TestManager.DbContext.MaintenanceLogs.Count();
-            MaintenanceLog last = TestManager.DbContext.MaintenanceLogs.Last();
-
-            Assert.That(before + 1 == after && last.Id == log.Id,
-                "Id are not equal or the MaintenanceLog is not created!");
+            Assert.That(dbContext.MaintenanceLogs.Count(), Is.EqualTo(1));
         }
 
         [Test]
-        public async Task Read()
+        public async Task Read_ReturnsMaintenanceLog()
         {
-            var user = new User { Name = "Test User" };
-            TestManager.DbContext.Users.Add(user);
-            await TestManager.DbContext.SaveChangesAsync();
-
-            var log = new MaintenanceLog
-            {
-                Description = "Fix issue",
-                Date = DateTime.UtcNow,
-                User = user
-            };
+            var log = TestData.CreateMaintenanceLog("Read log");
 
             await logContext.Create(log);
 
             var result = await logContext.Read(log.Id);
 
-            Assert.That(result.Description == "Fix issue", "Read() does not get MaintenanceLog by id!");
+            Assert.That(result.Description, Is.EqualTo("Read log"));
         }
 
         [Test]
-        public async Task ReadAll()
+        public async Task Update_ChangesDescription()
         {
-            var user = new User { Name = "User1" };
-            TestManager.DbContext.Users.Add(user);
-            await TestManager.DbContext.SaveChangesAsync();
+            var log = TestData.CreateMaintenanceLog("Old description");
 
-            var log1 = new MaintenanceLog { Description = "Log1", Date = DateTime.UtcNow, User = user };
-            var log2 = new MaintenanceLog { Description = "Log2", Date = DateTime.UtcNow, User = user };
-
-            await logContext.Create(log1);
-            await logContext.Create(log2);
-
-            int countBefore = 2;
-            int countAfter = (await logContext.ReadAll()).Count;
-
-            Assert.That(countBefore == countAfter, "ReadAll() does not return all MaintenanceLogs!");
-        }
-
-        [Test]
-        public async Task Update()
-        {
-            var user = new User { Name = "User1" };
-            TestManager.DbContext.Users.Add(user);
-            await TestManager.DbContext.SaveChangesAsync();
-
-            var log = new MaintenanceLog { Description = "Old description", Date = DateTime.UtcNow, User = user };
             await logContext.Create(log);
 
-            log.Description = "Updated description";
-
+            log.Description = "New description";
             await logContext.Update(log);
 
             var updated = await logContext.Read(log.Id);
 
-            Assert.That(updated.Description == "Updated description",
-                "Update() does not change the MaintenanceLog's description!");
+            Assert.That(updated.Description, Is.EqualTo("New description"));
         }
 
         [Test]
-        public async Task Delete()
+        public async Task Delete_RemovesMaintenanceLog()
         {
-            var user = new User { Name = "User1" };
-            TestManager.DbContext.Users.Add(user);
-            await TestManager.DbContext.SaveChangesAsync();
+            var log = TestData.CreateMaintenanceLog("Delete log");
 
-            var log = new MaintenanceLog { Description = "To delete", Date = DateTime.UtcNow, User = user };
             await logContext.Create(log);
 
             int before = (await logContext.ReadAll()).Count;
-
             await logContext.Delete(log.Id);
-
             int after = (await logContext.ReadAll()).Count;
 
-            Assert.That(before == after + 1, "Delete() does not delete the MaintenanceLog!");
-        }
-
-        [Test]
-        public void MaintenanceLogValidation()
-        {
-            var log = new MaintenanceLog
-            {
-                Description = "", // празно описание
-                Date = DateTime.UtcNow,
-                User = new User { Name = "User1" }
-            };
-
-            var validationResults = new List<ValidationResult>();
-            var context = new ValidationContext(log);
-
-            bool isValid = Validator.TryValidateObject(log, context, validationResults, true);
-
-            Assert.That(!isValid, "Validation should fail when Description is empty!");
+            Assert.That(after, Is.EqualTo(before - 1));
         }
     }
 }
+

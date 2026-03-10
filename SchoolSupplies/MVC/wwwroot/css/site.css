@@ -520,20 +520,5 @@ html, body {
             opacity: 0.5;
             cursor: not-allowed;
         }
-    @media (max-width: 992px) {
-        .search-filter-container .row > div:last-child {
-            flex: 0 0 100%;
-            max-width: 100%;
-            margin-top: 10px;
-        }
-    }
-
-    /* Допълнително намаляване на шрифта за много малки екрани (по желание) */
-    @media (max-width: 900px) {
-        .search-filter-container .row > div:last-child {
-            flex: 0 0 100%;
-            max-width: 100%;
-            margin-top: 10px;
-        }
-    }
+ 
 }

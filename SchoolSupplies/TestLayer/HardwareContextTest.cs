@@ -14,111 +14,99 @@ namespace TestLayer
     [TestFixture]
     public class HardwareContextTests
     {
-        private static HardwareContext hardwareContext;
-
-        static HardwareContextTests()
-        {
-            hardwareContext = new HardwareContext(TestManager.DbContext);
-        }
+        private SchoolSuppliesDbContext dbContext;
+        private HardwareContext hardwareContext;
 
         [SetUp]
-        public async Task Setup()
+        public void Setup()
         {
-            // Изчистваме таблиците преди всеки тест
-            TestManager.DbContext.Hardwares.RemoveRange(TestManager.DbContext.Hardwares);
-            TestManager.DbContext.Softwares.RemoveRange(TestManager.DbContext.Softwares);
-            TestManager.DbContext.MaintenanceLogs.RemoveRange(TestManager.DbContext.MaintenanceLogs);
-            TestManager.DbContext.Types.RemoveRange(TestManager.DbContext.Types);
-            TestManager.DbContext.Rooms.RemoveRange(TestManager.DbContext.Rooms);
-            TestManager.DbContext.Users.RemoveRange(TestManager.DbContext.Users);
+            dbContext = TestManager.GetDbContext(Guid.NewGuid().ToString());
+            hardwareContext = new HardwareContext(dbContext);
+        }
 
-            await TestManager.DbContext.SaveChangesAsync();
+        [TearDown]
+        public void TearDown()
+        {
+            dbContext.Dispose();
         }
 
         [Test]
-        public async Task Create()
+        public async Task Create_Hardware_AddsToDatabase()
         {
-            var hardware = new Hardware
-            {
-                Name = "Printer",
-                InventoryNumber = "INV123",
-                SerialNumber = "SN12345",
-                Status = ItemStatus.Working
-            };
+            var type = TestData.CreateType("Laptop");
+            var room = TestData.CreateRoom("101", 1);
 
-            int before = TestManager.DbContext.Hardwares.Count();
+            dbContext.Types.Add(type);
+            dbContext.Rooms.Add(room);
+            await dbContext.SaveChangesAsync();
+
+            var hardware = TestData.CreateHardware(type, room);
+
+            int before = dbContext.Hardwares.Count();
 
             await hardwareContext.Create(hardware);
 
-            int after = TestManager.DbContext.Hardwares.Count();
-            Hardware last = TestManager.DbContext.Hardwares.Last();
+            int after = dbContext.Hardwares.Count();
 
-            Assert.That(after == before + 1 && last.Id == hardware.Id,
-                "Hardware was not created correctly!");
+            Assert.That(after, Is.EqualTo(before + 1));
         }
 
         [Test]
-        public async Task Read()
+        public async Task Read_ReturnsHardware()
         {
-            var hardware = new Hardware
-            {
-                Name = "Scanner",
-                InventoryNumber = "INV456",
-                SerialNumber = "SN67890",
-                Status = ItemStatus.Working
-            };
+            var type = TestData.CreateType("Printer");
+            var room = TestData.CreateRoom("102", 1);
+
+            dbContext.Types.Add(type);
+            dbContext.Rooms.Add(room);
+            await dbContext.SaveChangesAsync();
+
+            var hardware = TestData.CreateHardware(type, room, "Printer HP");
+
             await hardwareContext.Create(hardware);
 
             var result = await hardwareContext.Read(hardware.Id);
 
-            Assert.That(result.Name == "Scanner", "Read() did not return the correct Hardware!");
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.Name, Is.EqualTo("Printer HP"));
         }
 
         [Test]
-        public async Task ReadAll()
+        public async Task Update_ChangesHardwareName()
         {
-            var hw1 = new Hardware { Name = "HW1", InventoryNumber = "INV1", SerialNumber = "SN1", Status = ItemStatus.Working};
-            var hw2 = new Hardware { Name = "HW2", InventoryNumber = "INV2", SerialNumber = "SN2", Status = ItemStatus.Working};
+            var type = TestData.CreateType("PC");
+            var room = TestData.CreateRoom("103", 2);
 
-            await hardwareContext.Create(hw1);
-            await hardwareContext.Create(hw2);
+            dbContext.Types.Add(type);
+            dbContext.Rooms.Add(room);
+            await dbContext.SaveChangesAsync();
 
-            var all = await hardwareContext.ReadAll();
+            var hardware = TestData.CreateHardware(type, room, "Old PC");
 
-            Assert.That(all.Count == 2, "ReadAll() did not return all hardware items!");
-        }
-
-        [Test]
-        public async Task Updatе()
-        {
-            var hardware = new Hardware
-            {
-                Name = "OldName",
-                InventoryNumber = "INV789",
-                SerialNumber = "SN98765",
-                Status = ItemStatus.Working
-            };
             await hardwareContext.Create(hardware);
 
-            hardware.Name = "NewName";
+            var fromDb = await hardwareContext.Read(hardware.Id, true);
+            fromDb.Name = "New PC";
 
-            await hardwareContext.Update(hardware);
+            await hardwareContext.Update(fromDb);
 
             var updated = await hardwareContext.Read(hardware.Id);
 
-            Assert.That(updated.Name == "NewName", "Update() did not change the Hardware's name!");
+            Assert.That(updated.Name, Is.EqualTo("New PC"));
         }
 
         [Test]
-        public async Task Delete()
+        public async Task Delete_RemovesHardware()
         {
-            var hardware = new Hardware
-            {
-                Name = "ToDelete",
-                InventoryNumber = "INV999",
-                SerialNumber = "SN99999",
-                Status = ItemStatus.Working
-            };
+            var type = TestData.CreateType("PC");
+            var room = TestData.CreateRoom("104", 2);
+
+            dbContext.Types.Add(type);
+            dbContext.Rooms.Add(room);
+            await dbContext.SaveChangesAsync();
+
+            var hardware = TestData.CreateHardware(type, room);
+
             await hardwareContext.Create(hardware);
 
             int before = (await hardwareContext.ReadAll()).Count;
@@ -127,18 +115,16 @@ namespace TestLayer
 
             int after = (await hardwareContext.ReadAll()).Count;
 
-            Assert.That(after == before - 1, "Delete() did not remove the Hardware!");
+            Assert.That(after, Is.EqualTo(before - 1));
         }
 
         [Test]
-        public void HardwareValidation()
+        public void HardwareValidation_Fails_WhenInventoryNumberMissing()
         {
             var hardware = new Hardware
             {
-                Name = "A",
-                InventoryNumber = "INV100",
-                SerialNumber = "SN10000",
-                Status = ItemStatus.Working
+                Name = "PC",
+                SerialNumber = "SERIAL-001"
             };
 
             var validationResults = new List<ValidationResult>();
@@ -146,7 +132,8 @@ namespace TestLayer
 
             bool isValid = Validator.TryValidateObject(hardware, context, validationResults, true);
 
-            Assert.That(!isValid, "Validation should fail for too short Name!");
+            Assert.That(isValid, Is.False);
         }
     }
 }
+

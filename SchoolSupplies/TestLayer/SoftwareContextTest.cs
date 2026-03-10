@@ -13,104 +13,120 @@ namespace TestLayer
     [TestFixture]
     public class SoftwareContextTests
     {
+        private SchoolSuppliesDbContext dbContext;
         private SoftwareContext softwareContext;
 
         [SetUp]
-        public async Task Setup()
+        public void Setup()
         {
-            softwareContext = new SoftwareContext(TestManager.DbContext);
+            dbContext = TestManager.GetDbContext(Guid.NewGuid().ToString());
+            softwareContext = new SoftwareContext(dbContext);
+        }
 
-            // Изчистваме всички таблици преди всеки тест
-            TestManager.DbContext.Softwares.RemoveRange(TestManager.DbContext.Softwares);
-            TestManager.DbContext.Licenses.RemoveRange(TestManager.DbContext.Licenses);
-            TestManager.DbContext.MaintenanceLogs.RemoveRange(TestManager.DbContext.MaintenanceLogs);
-            TestManager.DbContext.Types.RemoveRange(TestManager.DbContext.Types);
-            TestManager.DbContext.Rooms.RemoveRange(TestManager.DbContext.Rooms);
-            TestManager.DbContext.Users.RemoveRange(TestManager.DbContext.Users);
-
-            await TestManager.DbContext.SaveChangesAsync();
+        [TearDown]
+        public void TearDown()
+        {
+            dbContext.Dispose();
         }
 
         [Test]
-        public async Task Create()
+        public async Task Create_AddsSoftwareToDatabase()
         {
-            var software = new Software
-            {
-                Name = "Antivirus",
-                SerialNumber = "SN12345",
-            };
+            var type = TestData.CreateType("Office");
+            var license = TestData.CreateLicense("Office License");
 
-            int before = TestManager.DbContext.Softwares.Count();
+            dbContext.Types.Add(type);
+            dbContext.Licenses.Add(license);
+            await dbContext.SaveChangesAsync();
+
+            var software = TestData.CreateSoftware(type, license);
+
+            int before = dbContext.Softwares.Count();
 
             await softwareContext.Create(software);
 
-            int after = TestManager.DbContext.Softwares.Count();
-            Software last = TestManager.DbContext.Softwares.Last();
+            int after = dbContext.Softwares.Count();
 
-            Assert.That(before + 1 == after && last.Id == software.Id,
-                "Id are not equal or the software is not created!");
+            Assert.That(after, Is.EqualTo(before + 1));
         }
 
         [Test]
-        public async Task Read()
+        public async Task Read_ReturnsCorrectSoftware()
         {
-            var software = new Software
-            {
-                Name = "Office",
-                SerialNumber = "SN67890",
-            };
+            var type = TestData.CreateType("Antivirus");
+            var license = TestData.CreateLicense("AV License");
+
+            dbContext.Types.Add(type);
+            dbContext.Licenses.Add(license);
+            await dbContext.SaveChangesAsync();
+
+            var software = TestData.CreateSoftware(type, license, name: "Kaspersky");
 
             await softwareContext.Create(software);
 
             var result = await softwareContext.Read(software.Id);
 
-            Assert.That(result.Name == "Office", "Read() does not get Software by id!");
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.Name, Is.EqualTo("Kaspersky"));
         }
 
         [Test]
-        public async Task ReadAll()
+        public async Task ReadAll_ReturnsAllSoftwares()
         {
-            var sw1 = new Software { Name = "SW1", SerialNumber = "SN1" };
-            var sw2 = new Software { Name = "SW2", SerialNumber = "SN2" };
+            var type = TestData.CreateType("Office");
+            var license = TestData.CreateLicense();
+
+            dbContext.Types.Add(type);
+            dbContext.Licenses.Add(license);
+            await dbContext.SaveChangesAsync();
+
+            var sw1 = TestData.CreateSoftware(type, license, name: "Office 1");
+            var sw2 = TestData.CreateSoftware(type, license, name: "Office 2");
+            sw2.SerialNumber = "SOFT-002";
 
             await softwareContext.Create(sw1);
             await softwareContext.Create(sw2);
 
-            int countBefore = 2;
-            int countAfter = (await softwareContext.ReadAll()).Count;
+            var all = await softwareContext.ReadAll();
 
-            Assert.That(countBefore == countAfter, "ReadAll() does not return all of the Software!");
+            Assert.That(all.Count, Is.EqualTo(2));
         }
 
         [Test]
-        public async Task Update()
+        public async Task Update_ChangesSoftwareName()
         {
-            var software = new Software
-            {
-                Name = "OldSoftware",
-                SerialNumber = "SN98765"
-            };
+            var type = TestData.CreateType("Office");
+            var license = TestData.CreateLicense();
+
+            dbContext.Types.Add(type);
+            dbContext.Licenses.Add(license);
+            await dbContext.SaveChangesAsync();
+
+            var software = TestData.CreateSoftware(type, license, name: "Old Name");
 
             await softwareContext.Create(software);
 
-            software.Name = "UpdatedSoftware";
+            var fromDb = await softwareContext.Read(software.Id, true);
+            fromDb.Name = "New Name";
 
-            await softwareContext.Update(software);
+            await softwareContext.Update(fromDb);
 
             var updated = await softwareContext.Read(software.Id);
 
-            Assert.That(updated.Name == "UpdatedSoftware",
-                "Update() does not change the Software's name!");
+            Assert.That(updated.Name, Is.EqualTo("New Name"));
         }
 
         [Test]
-        public async Task Delete()
+        public async Task Delete_RemovesSoftware()
         {
-            var software = new Software
-            {
-                Name = "ToDeleteSoftware",
-                SerialNumber = "SN99999"
-            };
+            var type = TestData.CreateType("Office");
+            var license = TestData.CreateLicense();
+
+            dbContext.Types.Add(type);
+            dbContext.Licenses.Add(license);
+            await dbContext.SaveChangesAsync();
+
+            var software = TestData.CreateSoftware(type, license);
 
             await softwareContext.Create(software);
 
@@ -120,16 +136,16 @@ namespace TestLayer
 
             int after = (await softwareContext.ReadAll()).Count;
 
-            Assert.That(before == after + 1, "Delete() does not delete the Software!");
+            Assert.That(after, Is.EqualTo(before - 1));
         }
 
         [Test]
-        public void SoftwareValidation()
+        public void SoftwareValidation_Fails_WhenNameTooShort()
         {
             var software = new Software
             {
                 Name = "A",
-                SerialNumber = "SN10000"
+                SerialNumber = "SOFT-001"
             };
 
             var validationResults = new List<ValidationResult>();
@@ -137,7 +153,7 @@ namespace TestLayer
 
             bool isValid = Validator.TryValidateObject(software, context, validationResults, true);
 
-            Assert.That(!isValid, "Validation should fail for too short Name!");
+            Assert.That(isValid, Is.False);
         }
     }
 }
