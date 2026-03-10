@@ -146,6 +146,27 @@ namespace ServiceLayer
 
             return currentUsage + newUsage > license.MaxUsage;
         }
+        public async Task<PagedResultViewModel<Software>> ReadPaged(int page, int pageSize, string? parameter, int? typeId)
+        {
+            var softwares = await SearchCombined(parameter, typeId);
+
+            int totalItems = softwares.Count;
+
+            var items = softwares
+                .OrderBy(s => s.Name)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+
+            return new PagedResultViewModel<Software>
+            {
+                Items = items,
+                CurrentPage = page,
+                PageSize = pageSize,
+                TotalItems = totalItems,
+                TotalPages = (int)Math.Ceiling(totalItems / (double)pageSize)
+            };
+        }
     }
 
 }

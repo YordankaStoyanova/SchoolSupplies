@@ -3,7 +3,6 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<!-- Съобщение за гости -->
 
 
 @section Styles {
@@ -22,6 +21,66 @@
             color: var(--accent-brown);
             margin-bottom: 20px;
         }
+
+        :root {
+            --primary-beige: #F5F1E8;
+            --secondary-cream: #E8DFCA;
+            --accent-brown: #A68B7B;
+            --dark-brown: #7D6E5D;
+            --light-beige: #FAF7F0;
+        }
+
+        body {
+            background-color: var(--primary-beige);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #333;
+        }
+
+        .btn-login {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 5px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+            .btn-login:hover {
+                background-color: #2980b9;
+                color: white;
+                transform: translateY(-2px);
+            }
+        /* Навигация */
+        .navbar {
+            background-color: var(--dark-brown);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .navbar-brand {
+            color: white !important;
+            font-weight: 600;
+            font-size: 1.4rem;
+        }
+
+        .nav-tabs {
+            border-bottom: 2px solid var(--accent-brown);
+            margin-bottom: 20px;
+        }
+
+            .nav-tabs .nav-link {
+                color: var(--dark-brown);
+                font-weight: 500;
+                border: none;
+                padding: 12px 24px;
+            }
+
+                .nav-tabs .nav-link.active {
+                    background-color: var(--accent-brown);
+                    color: white;
+                    border-radius: 8px 8px 0 0;
+                }
+
     </style>
 }
 

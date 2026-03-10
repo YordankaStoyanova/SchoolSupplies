@@ -30,10 +30,16 @@ namespace MVC.Controllers
         }
 
         // GET: Hardwares
-        public async Task<IActionResult> Index(string? s,ItemStatus? t, int? r)
+        public async Task<IActionResult> Index(string? s, ItemStatus? t, int? r, int pageNumber = 1)
         {
-            var hardwares = await hardwareService.SearchCombined(s,t,r);
-            return View(hardwares);
+            int pageSize = 5;
+
+            var result = await hardwareService.ReadPaged(pageNumber, pageSize, s, t, r);
+
+            ViewBag.PageNumber = result.CurrentPage;
+            ViewBag.TotalPages = result.TotalPages;
+
+            return View(result.Items);
         }
 
 

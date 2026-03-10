@@ -2,6 +2,7 @@
 using BusinessLayer;
 using BusinessLayer.Enum;
 using DataLayer;
+using Microsoft.EntityFrameworkCore;
 
 
 namespace ServiceLayer
@@ -149,7 +150,27 @@ namespace ServiceLayer
 
             await _hardwareContext.Update(hardware, useNavigationalProperties: true);
         }
+        public async Task<PagedResultViewModel<Hardware>> ReadPaged(int page, int pageSize, string? parameter, ItemStatus? status, int? roomId)
+        {
+            var hardwares = await SearchCombined(parameter, status, roomId);
 
+            int totalItems = hardwares.Count;
+
+            var items = hardwares
+                .OrderBy(h => h.Name)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+
+            return new PagedResultViewModel<Hardware>
+            {
+                Items = items,
+                CurrentPage = page,
+                PageSize = pageSize,
+                TotalItems = totalItems,
+                TotalPages = (int)Math.Ceiling(totalItems / (double)pageSize)
+            };
+        }
     }
 
 }

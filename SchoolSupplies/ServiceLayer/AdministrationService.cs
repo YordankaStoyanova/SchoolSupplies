@@ -3,6 +3,7 @@ using BusinessLayer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -138,6 +139,31 @@ namespace ServiceLayer
             }
 
             return await _userManager.DeleteAsync(user);
+        }
+        public async Task<PagedResultViewModel<User>> ReadPaged(int page, int pageSize, string? parameter)
+        {
+            var users = await SearchByParameter(parameter);
+
+            int totalItems = users.Count;
+
+            var items = users
+                .OrderBy(u => u.Name)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+
+            return new PagedResultViewModel<User>
+            {
+                Items = items,
+                CurrentPage = page,
+                PageSize = pageSize,
+                TotalItems = totalItems,
+                TotalPages = (int)Math.Ceiling(totalItems / (double)pageSize)
+            };
+        }
+        public async Task<int> TotalUsersCountAsync()
+        {
+            return await _userManager.Users.CountAsync();
         }
     }
 

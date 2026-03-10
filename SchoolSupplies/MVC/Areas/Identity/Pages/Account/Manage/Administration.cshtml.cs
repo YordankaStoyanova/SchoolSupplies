@@ -20,9 +20,22 @@ namespace MVC.Areas.Identity.Pages.Account.Manage
 
         public List<User> Users { get; set; } = new();
 
-        public async Task OnGet(string? s)
+        public int PageNumber { get; set; }
+        public int TotalPages { get; set; }
+        public int TotalUsers { get; set; }
+
+        public async Task OnGet(string? s, int pageNumber = 1)
         {
-            Users = await _administrationService.SearchByParameter(s);
+            int pageSize = 2;
+
+            var result = await _administrationService.ReadPaged(pageNumber, pageSize, s);
+
+            Users = result.Items;
+            PageNumber = result.CurrentPage;
+            TotalPages = result.TotalPages;
+            TotalUsers = result.TotalItems;
+            TotalUsers = await _administrationService.TotalUsersCountAsync();
         }
     }
 }
+

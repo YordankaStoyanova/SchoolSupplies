@@ -30,12 +30,17 @@ namespace MVC.Controllers
         }
         // private readonly ILogger<SoftwareController> _logger;
         // GET: Softwares
-        public async Task<IActionResult> Index(string? s, int? t)
+        public async Task<IActionResult> Index(string? s, int? t, int pageNumber = 1)
         {
-            var softwares = await softwareService.SearchCombined(s,t);
-            return View(softwares);
-        }
+            int pageSize = 5;
 
+            var result = await softwareService.ReadPaged(pageNumber, pageSize, s, t);
+
+            ViewBag.PageNumber = result.CurrentPage;
+            ViewBag.TotalPages = result.TotalPages;
+
+            return View(result.Items);
+        }
 
         // GET: Softwares/Details/5
         [Authorize(Roles = "Administrator,User")]
