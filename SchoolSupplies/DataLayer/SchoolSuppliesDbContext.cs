@@ -26,11 +26,7 @@ namespace DataLayer
         public SchoolSuppliesDbContext(DbContextOptions optionsBuilder) : base(optionsBuilder)
         {
         }
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            if (!optionsBuilder.IsConfigured) optionsBuilder.UseSqlServer("Server=DESKTOP-VICJK85\\SQLEXPRESS;Database=SchoolSupplies;Trusted_Connection=True;TrustServerCertificate=Yes;");
-            base.OnConfiguring(optionsBuilder);
-        }
+        
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Software>(s =>

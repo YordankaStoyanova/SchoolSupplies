@@ -41,7 +41,7 @@ public class Startup
         services.AddHttpContextAccessor();
 
         services.AddDbContext<SchoolSuppliesDbContext>(options =>
-               options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+               options.UseSqlServer(Configuration.GetConnectionString("ServerDbConnection")));
 
         services.AddIdentity<User, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = false)
             .AddEntityFrameworkStores<SchoolSuppliesDbContext>()

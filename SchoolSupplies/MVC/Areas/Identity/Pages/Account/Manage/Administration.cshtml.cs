@@ -26,7 +26,7 @@ namespace MVC.Areas.Identity.Pages.Account.Manage
 
         public async Task OnGet(string? s, int pageNumber = 1)
         {
-            int pageSize = 2;
+            int pageSize = 5;
 
             var result = await _administrationService.ReadPaged(pageNumber, pageSize, s);
 

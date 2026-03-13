@@ -19,6 +19,7 @@ namespace ApplicationLayer.ViewModels
         [Required(ErrorMessage = "Имейлът е задължителен!")]
         [EmailAddress(ErrorMessage = "Невалиден имейл!")]
         public string Email { get; set; } = string.Empty;
+
         [RegularExpression(@"^(08\d{8}|\+359\d{9}|359\d{9})$",
                 ErrorMessage = "Телефонният номер трябва да е български и да започва с 08, +359 или 359.")]
         public string? PhoneNumber { get; set; }

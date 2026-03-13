@@ -1,7 +1,7 @@
 ﻿@using BusinessLayer
 @model Hardware
 @{
-    ViewData["Title"] = "Детайли за хардуер";
+   
     var installedSoftware = ViewBag.InstalledSoftware as List<string> ?? new List<string>();
     Layout = null;
 }
@@ -10,137 +10,25 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Управление на училищен инвентар</title>
+    <title>@ViewData["Title"] Управление на училищен инвентар</title>
+    <link href="~/school.ico" rel="shortcut icon" type="image/x-icon" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <style>
-        /* Същият CSS като в Delete, плюс стилове за software-list */
-        :root {
-            --primary-beige: #F5F1E8;
-            --secondary-cream: #E8DFCA;
-            --accent-brown: #A68B7B;
-            --dark-brown: #7D6E5D;
-        }
-
-        body {
-            background-color: var(--primary-beige);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        .navbar {
-            background-color: var(--dark-brown);
-        }
-
-        .navbar-brand {
-            color: white !important;
-            font-weight: 600;
-            font-size: 1.5rem;
-        }
-
-        .details-container {
-            background-color: white;
-            border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-            padding: 30px;
-            margin-top: 20px;
-        }
-
-        .details-header {
-            border-bottom: 2px solid var(--accent-brown);
-            padding-bottom: 15px;
-            margin-bottom: 25px;
-        }
-
-        .details-title {
-            color: var(--dark-brown);
-            font-weight: 600;
-        }
-
-        .info-label {
-            color: var(--dark-brown);
-            font-weight: 500;
-            margin-bottom: 5px;
-        }
-
-        .info-value {
-            font-size: 1.1rem;
-            padding: 8px 0;
-            border-bottom: 1px solid #eee;
-        }
-
-        .btn-custom {
-            background-color: var(--accent-brown);
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 6px;
-            font-weight: 500;
-            transition: all 0.3s;
-        }
-
-            .btn-custom:hover {
-                background-color: var(--dark-brown);
-                transform: translateY(-2px);
+        @@media (max-width:548px) {
+            .btn-add-maintenance {
+                margin-top: 15px !important;
             }
-
-        .btn-warning {
-            background-color: #f39c12;
-            color: white;
-            border: none;
         }
-
-            .btn-warning:hover {
-                background-color: #e67e22;
+        @@media (max-width:345px) {
+            .btn-delete {
+                margin-top: 15px;
             }
-
-        .btn-danger {
-            background-color: #e74c3c;
-            color: white;
-            border: none;
         }
-
-            .btn-danger:hover {
-                background-color: #e74c3c;
-                color: black;
-            }
-
-        .btn-maintenance {
-            background-color: #3498db;
-            color: white;
-            border: none;
-        }
-
-            .btn-maintenance:hover {
-                background-color: #2980b9;
-            }
-
-        .breadcrumb-custom {
-            background-color: transparent;
-            padding: 0;
-            margin-bottom: 20px;
-        }
-
-            .breadcrumb-custom .breadcrumb-item a {
-                color: var(--accent-brown);
-                text-decoration: none;
-            }
-
-            .breadcrumb-custom .breadcrumb-item.active {
-                color: var(--dark-brown);
-            }
-
-        .software-list {
-            list-style-type: none;
-            padding-left: 0;
-        }
-
-            .software-list li {
-                padding: 10px 15px;
-                background-color: #f9f9f9;
-                margin-bottom: 8px;
-                border-radius: 6px;
-                border-left: 4px solid var(--accent-brown);
-            }
+    
+      
+       
     </style>
 </head>
 <body>
@@ -217,10 +105,10 @@
                         <a class="btn btn-warning me-2" asp-action="Edit" asp-route-id="@Model.Id">
                             <i class="fas fa-edit me-2"></i> Редактиране
                         </a>
-                        <a class="btn btn-danger" asp-action="Delete" asp-route-id="@Model.Id">
+                        <a class="btn btn-danger btn-delete" asp-action="Delete" asp-route-id="@Model.Id">
                             <i class="fas fa-trash-alt me-2"></i> Изтриване
                         </a>
-                        <a class="btn btn-maintenance" asp-action="AddMaintenance" asp-route-id="@Model.Id">
+                        <a class="btn btn-maintenance btn-add-maintenance" asp-action="AddMaintenance" asp-route-id="@Model.Id">
                             <i class="fas fa-tools me-2"></i> Добави поддръжка
                         </a>
                     </div>

@@ -306,6 +306,18 @@ body {
         transform: translateY(-2px);
     }
 
+.btn-maintenance {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    
+}
+
+    .btn-maintenance:hover {
+         background-color: #2980b9;
+        
+    }
+
 .form-container, .details-container {
     background-color: white;
     border-radius: 10px;
