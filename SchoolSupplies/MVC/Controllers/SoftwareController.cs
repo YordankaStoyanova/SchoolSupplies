@@ -15,9 +15,9 @@ namespace MVC.Controllers
     public class SoftwareController(SoftwareService softwareService,HardwareService hardwareService, IDb<BusinessLayer.Type, int> typeContext, LicenseService licenseService) : Controller
     {
         private async Task LoadSoftwareDropdownsAsync(
-     List<int>? selectedHardwareIds = null,
-     int? selectedTypeId = null,
-     int? selectedLicenseId = null)
+         List<int>? selectedHardwareIds = null,
+         int? selectedTypeId = null,
+         int? selectedLicenseId = null)
         {
             ViewBag.Hardwares = new SelectList(
                 await hardwareService.ReadAll(true, true), "Id", "Name", selectedHardwareIds);
@@ -28,12 +28,10 @@ namespace MVC.Controllers
             ViewBag.Licenses = new SelectList(
                 await licenseService.ReadAll(false, true), "Id", "Name", selectedLicenseId);
         }
-        // private readonly ILogger<SoftwareController> _logger;
         // GET: Softwares
         public async Task<IActionResult> Index(string? s, int? t, int pageNumber = 1)
         {
             int pageSize = 5;
-
             var result = await softwareService.ReadPaged(pageNumber, pageSize, s, t);
 
             ViewBag.PageNumber = result.CurrentPage;
@@ -57,48 +55,15 @@ namespace MVC.Controllers
 
             return View(software);
         }
-
-        [Authorize(Roles = "Administrator")]
+   
         //// GET: Softwares/Create
-        //public async Task<IActionResult> Create()
-        //{
-        //    ViewBag.SoftwareTypes = new SelectList(await typeContext.ReadAll(false, true), "Id", "Name");
-        //    ViewBag.License = new SelectList(await licenseService.ReadAll(false, true), "Id", "Name");
-        //    ViewBag.HardwareIds = new SelectList(await hardwareService.ReadAll(false, true), "Id", "Name");
-        //    return View();
-
-        //}
-
-        //[Authorize(Roles = "Administrator")]
-        //// POST: Softwares/Create
-        //// To protect from overposting attacks, enable the specific properties you want to bind to.
-        //// For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> Create([Bind("Name,SerialNumber,TypeId,LicenseId,HardwareIds")] SoftwareViewModel model)
-        //{
-        //    try
-        //    {
-        //        if (ModelState.IsValid)
-        //        {
-        //            await softwareService.Create(model);
-        //            return RedirectToPage("/Account/Manage/Softwareware", new { area = "Identity" });
-        //        }
-        //        return View(model);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return NotFound();
-        //    }
-        //}
         [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Create()
         {
             await LoadSoftwareDropdownsAsync();
             return View(new SoftwareViewModel());
         }
-
+        //// POST: Softwares/Create
         [Authorize(Roles = "Administrator")]
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -127,7 +92,6 @@ namespace MVC.Controllers
                 return View(model);
             }
         }
-        [Authorize(Roles = "Administrator")]
         // GET: Softwares/License
         [Authorize(Roles = "Administrator")]
         public IActionResult License()
@@ -151,50 +115,7 @@ namespace MVC.Controllers
             return RedirectToPage("/Account/Manage/Software", new { area = "Identity" });
         }
 
-        //[Authorize(Roles = "Administrator")]
         //// GET: Softwares/Edit/5
-        //public async Task<IActionResult> Edit(int? id)
-        //{
-        //    if (id == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    var software = await softwareService.Read(id.Value);
-        //    if (software == null)
-        //    {
-        //        return NotFound();
-        //    }
-        //    return View(software);
-        //}
-        //[Authorize(Roles = "Administrator")]
-        //// POST: Softwares/Edit/5
-        //// To protect from overposting attacks, enable the specific properties you want to bind to.
-        //// For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> Edit(int id, [Bind("Id,Name,SerialNumber,Category,Type,MaintanceLogs,License")] Software software)
-        //{
-        //    if (id != software.Id)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    if (ModelState.IsValid)
-        //    {
-        //        try
-        //        {
-        //            await softwareService.Update(software);
-        //            return RedirectToAction(nameof(Index));
-        //        }
-        //        catch (DbUpdateConcurrencyException)
-        //        {
-        //            return NotFound();
-        //        }
-        //    }
-        //    return View(software);
-        //    // return RedirectToAction(nameof(Index)); ?
-        //}
         [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Edit(int id)
         {
@@ -214,7 +135,7 @@ namespace MVC.Controllers
             await LoadSoftwareDropdownsAsync(vm.HardwareIds, vm.TypeId, vm.LicenseId);
             return View(vm);
         }
-
+        // POST: Softwares/Edit/5
         [Authorize(Roles = "Administrator")]
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -263,8 +184,8 @@ namespace MVC.Controllers
 
             return View(software);
         }
-        [Authorize(Roles = "Administrator")]
         // POST: Softwares/Delete/5
+        [Authorize(Roles = "Administrator")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -279,6 +200,7 @@ namespace MVC.Controllers
                 return NotFound();
             }
         }
+        //// GET: Softwares/AddMaintenance/5
         [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> AddMaintenance(int id)
         {
@@ -292,7 +214,7 @@ namespace MVC.Controllers
                 Date = DateTime.Now
             });
         }
-
+        //// POST: Softwares/AddMaintenance/5
         [Authorize(Roles = "Administrator")]
         [HttpPost]
         [ValidateAntiForgeryToken]

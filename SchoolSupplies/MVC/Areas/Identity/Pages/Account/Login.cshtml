@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link href="~/school.ico" rel="shortcut icon" type="image/x-icon" />
+    <title>@ViewData["Title"]</title>
     <style>
         :root {
             --primary-beige: #F5F1E8;
@@ -171,33 +172,10 @@
                 margin-bottom: 0;
             }
 
-        /* External logins */
-        .external-login-container {
-            width: 100%;
-            max-width: 400px;
-            padding: 20px;
-            margin-top: 20px;
-        }
-
-            .external-login-container .login-card {
-                max-width: 100%;
-            }
-
-            .external-login-container .btn-primary {
-                background-color: var(--accent-brown);
-                border-color: var(--accent-brown);
-                width: 100%;
-            }
-
-                .external-login-container .btn-primary:hover {
-                    background-color: var(--dark-brown);
-                    border-color: var(--dark-brown);
-                }
-
         .text-muted {
             color: #666 !important;
         }
-
+ 
         /* Responsive design */
         @@media (max-width: 576px) {
             .login-container
@@ -238,7 +216,7 @@
             font-size: 14px;
         }
 
-        }
+        }  
     </style>
 </head>
 
@@ -255,7 +233,7 @@
             <p class="text-muted">Моля, въведете вашите данни</p>
         </div>
 
-        <!-- Съобщение за валидационни грешки -->
+        <!--Съобщение за валидационни грешки -->
         <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
 
         <form id="account" method="post">
@@ -276,7 +254,7 @@
             <div class="mb-3 form-check">
                 <input class="form-check-input" asp-for="Input.RememberMe" />
                 <label class="form-check-label" asp-for="Input.RememberMe">
-                    @Html.DisplayNameFor(m => m.Input.RememberMe)
+                    Запомни ме
                 </label>
             </div>
 

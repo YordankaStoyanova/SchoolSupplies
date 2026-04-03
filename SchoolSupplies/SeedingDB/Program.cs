@@ -32,11 +32,8 @@ class Program
             };
 
             var options = new DbContextOptionsBuilder<SchoolSuppliesDbContext>()
-                .UseSqlServer(
-                    "Server=DESKTOP-VICJK85\\SQLEXPRESS;Database=SchoolSupplies;Trusted_Connection=True;TrustServerCertificate=True;"
-                )
-                .Options;
-
+               // .UseSqlServer("Server=DESKTOP-VICJK85\\SQLEXPRESS;Database=SchoolSupplies;Trusted_Connection=True;TrustServerCertificate=True;").Options;
+               .UseSqlServer("Data Source=SQL6034.site4now.net;Initial Catalog=db_ac6996_yordanka07;User Id=db_ac6996_yordanka07_admin;Password=Dani252321;Encrypt=True;TrustServerCertificate=True;").Options;
             using var db = new SchoolSuppliesDbContext(options);
 
             db.Database.Migrate();
@@ -64,10 +61,9 @@ class Program
                 new Logger<RoleManager<IdentityRole>>(new LoggerFactory())
             );
 
-            //await SeedRoles(roleManager);
-            //await SeedAdmin(userManager);
-            //  await SeedUser(userManager);
-            // await SeedDatabase(db);
+            await SeedRoles(roleManager);
+            await SeedAdmin(userManager);
+             await SeedUser(userManager);
             await SeedTypesAsync(db);
 
             // 2) Seed Rooms

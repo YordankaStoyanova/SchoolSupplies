@@ -19,7 +19,6 @@ namespace DataLayer
         public DbSet<Software> Softwares { get; set; }
         public DbSet<Hardware> Hardwares { get; set; }
         public DbSet<Room> Rooms { get; set; }
-        //public DbSet<User> Users {  get; set; }
         public DbSet<Type> Types { get; set; }
         public DbSet<MaintenanceLog> MaintenanceLogs { get; set; }
         public DbSet<License> Licenses { get; set; }
@@ -31,23 +30,20 @@ namespace DataLayer
         {
             modelBuilder.Entity<Software>(s =>
             {
-                // 1 License -> many Softwares
+                // 1 Лиценз -> много софтуери
                 s.HasOne(x => x.License)
                  .WithMany(l => l.Softwares)
                  .HasForeignKey(x => x.LicenseId)
                  .OnDelete(DeleteBehavior.Restrict);
-
-                // many-to-many Software <-> Hardware
+                // Много софтуери <-> Много хардуери
                 s.HasMany(x => x.Hardwares)
                  .WithMany(h => h.Softwares);
 
-                // ако имаш TypeId:
                 s.HasOne(x => x.Type)
                  .WithMany()
                  .HasForeignKey(x => x.TypeId)
                  .OnDelete(DeleteBehavior.Restrict);
             });
-
             modelBuilder.Entity<MaintenanceLog>(m =>
             {
                 m.HasOne(x => x.Hardware)
